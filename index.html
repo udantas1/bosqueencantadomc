@@ -3,253 +3,220 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bosque Encantado - Convite</title>
+    <title>Bosque Encantado</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- FontAwesome -->
+    <!-- FontAwesome para Ícones puros, sem emojis -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Great+Vibes&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --moss-light: #4ade80;
-            --moss-dark: #14532d;
-            --magic-gold: #fde047;
-            --forest-bg: #020617;
+            --forest-dark: #0a110a;
+            --forest-light: #dcfce7;
+            --gold-accent: #fde047;
         }
 
         body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--forest-bg);
-            font-family: 'Lora', serif;
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            background-color: var(--forest-dark);
+            font-family: 'Cormorant Garamond', serif;
             color: #e2e8f0;
             overflow-x: hidden;
-            perspective: 1000px; /* Para efeitos 3D reais */
+            scroll-behavior: smooth;
         }
 
-        h1, h2, h3, .font-cinzel { font-family: 'Cinzel Decorative', serif; }
-        .font-cursive { font-family: 'Great Vibes', cursive; }
+        h1, h2, h3, .font-cinzel { font-family: 'Cinzel', serif; }
 
-        /* --- BACKGROUNDS E PARALLAX --- */
+        /* --- BACKGROUND PARALLAX DINÂMICO --- */
         #viewport {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
             overflow: hidden;
             z-index: 1;
+            perspective: 1200px;
         }
 
         .layer {
             position: absolute;
-            top: -10%; left: -10%;
-            width: 120%; height: 120%;
+            top: -15%; left: -15%;
+            width: 130%; height: 130%;
             background-size: cover;
-            background-position: center;
-            transition: transform 4s cubic-bezier(0.25, 1, 0.5, 1), opacity 2s;
+            background-position: center bottom;
+            background-repeat: no-repeat;
+            transition: transform 12s cubic-bezier(0.25, 1, 0.5, 1), filter 8s ease-in-out;
+            will-change: transform;
         }
 
+        /* Fundo principal da floresta baseada na imagem enviada */
         .layer-back {
-            background-image: url('https://images.unsplash.com/photo-1448375240586-882707db888b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
-            filter: brightness(0.3) blur(2px);
+            background-image: url('image_ad09de.jpg');
             z-index: 1;
+            filter: brightness(0.6) blur(2px);
         }
 
-        .layer-mid {
-            background-image: url('https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
-            filter: brightness(0.5);
+        /* Efeito de neblina e luz do sol */
+        .layer-light {
+            background: radial-gradient(circle at center top, rgba(253, 224, 71, 0.3) 0%, transparent 60%);
             z-index: 2;
-            opacity: 0.5;
+            mix-blend-mode: screen;
         }
 
-        /* Efeito de câmera entrando na floresta (3D Zoom) */
-        .zoom-in-3d .layer-back { transform: scale(1.5) translateZ(-500px); opacity: 0; }
-        .zoom-in-3d .layer-mid { transform: scale(2.2) translateZ(200px); opacity: 0; }
-        .zoom-in-3d #particles-container { transform: scale(1.5) translateZ(100px); }
+        /* Animação lenta da Câmera (Zoom IN suave) */
+        .camera-walking .layer-back {
+            transform: translateZ(300px) scale(1.4) translateY(5%);
+            filter: brightness(0.9) blur(0px);
+        }
+        
+        .camera-deep .layer-back {
+            transform: translateZ(500px) scale(1.8) translateY(10%);
+            filter: brightness(0.4) blur(3px); /* Escurece para focar nos textos */
+        }
 
-        /* --- ELEMENTOS MÁGICOS (MUSGO, VIDRO, BRILHO) --- */
+        /* --- ELEMENTOS MÁGICOS (Minimalistas) --- */
         .glass-panel {
-            background: rgba(10, 25, 15, 0.7);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(74, 222, 128, 0.2);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(74, 222, 128, 0.05);
+            background: rgba(5, 15, 5, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(74, 222, 128, 0.15);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.9);
         }
 
+        /* Textura Musgo / Natureza nos textos */
         .moss-text {
-            /* Textura real de musgo nas letras */
             background-image: url('https://images.unsplash.com/photo-1518331526435-021b4a520261?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');
             background-size: cover;
             background-position: center;
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            filter: drop-shadow(0px 8px 10px rgba(0,0,0,0.8));
-            position: relative;
+            filter: drop-shadow(0px 5px 8px rgba(0,0,0,0.8));
         }
 
-        /* Decoração de flores ao redor dos números */
-        .floral-decor::before, .floral-decor::after {
-            content: '🌸';
-            position: absolute;
-            font-size: 0.4em;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
-            animation: float 3s ease-in-out infinite alternate;
-        }
-        .floral-decor::before { top: -10%; left: -15%; }
-        .floral-decor::after { bottom: -10%; right: -15%; animation-delay: 1.5s; }
-
-        .magic-glow {
-            text-shadow: 0 0 10px rgba(253, 224, 71, 0.8), 0 0 20px rgba(253, 224, 71, 0.4);
-        }
-
-        /* --- ANIMAÇÕES 3D E PARTICULAS --- */
-        @keyframes float {
+        /* --- ANIMAÇÕES DE AMBIENTE (Lentas e Suaves) --- */
+        @keyframes floatSlow {
             0% { transform: translateY(0px) rotate(0deg); }
-            100% { transform: translateY(-10px) rotate(10deg); }
+            50% { transform: translateY(-15px) rotate(2deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
         }
 
-        @keyframes firefly {
-            0%, 100% { opacity: 0; transform: scale(0.5) translate(0, 0); }
-            50% { opacity: 1; transform: scale(1.5) translate(var(--rx), var(--ry)); box-shadow: 0 0 10px #fde047, 0 0 20px #fde047; }
+        /* Borboletas SVG / Ícones Puros Animados */
+        @keyframes butterflyFlutter {
+            0%, 100% { transform: scaleX(1) translateY(0); opacity: 0; }
+            10% { opacity: 0.8; }
+            50% { transform: scaleX(0.1) translateY(-20px); }
+            90% { opacity: 0.8; }
+        }
+        
+        @keyframes flyAcrossScreen {
+            0% { transform: translate(-20vw, 80vh) scale(0.5); }
+            100% { transform: translate(120vw, 10vh) scale(1.5); }
         }
 
-        @keyframes leafSpin {
-            0% { transform: translate3d(0, -10vh, -200px) rotateX(0) rotateY(0) rotateZ(0); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translate3d(var(--tx), 110vh, 200px) rotateX(360deg) rotateY(180deg) rotateZ(360deg); opacity: 0; }
-        }
-
-        /* Animais correndo em 3D (Z-axis scaling) */
-        @keyframes run3D {
-            0% { transform: translate3d(-20vw, 10vh, -500px) scale(0.3); opacity: 0; filter: blur(5px); }
-            20% { opacity: 1; filter: blur(2px); }
-            50% { transform: translate3d(40vw, 5vh, 100px) scale(1.2); filter: blur(0px); }
-            80% { opacity: 1; filter: blur(2px); }
-            100% { transform: translate3d(120vw, 15vh, -300px) scale(0.5); opacity: 0; filter: blur(5px); }
-        }
-
-        @keyframes fly3D {
-            0% { transform: translate3d(120vw, -20vh, -400px) scale(0.2) rotateY(180deg); opacity: 0; filter: blur(3px); }
-            30% { opacity: 1; filter: blur(0px); }
-            100% { transform: translate3d(-20vw, 30vh, 300px) scale(1.8) rotateY(180deg); opacity: 0; filter: blur(4px); }
-        }
-
-        .animal-3d {
+        .svg-butterfly {
             position: absolute;
-            font-size: 5rem; /* Usando emojis HQ com sombras para simular 3D na web */
-            text-shadow: 0 20px 20px rgba(0,0,0,0.8);
+            color: #fbbf24;
+            filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.8));
             z-index: 50;
-            bottom: 20%;
-            pointer-events: none;
+            animation: flyAcrossScreen 18s linear infinite;
             will-change: transform;
         }
-
-        .bird-3d {
-            position: absolute;
-            font-size: 3rem;
-            text-shadow: 0 10px 15px rgba(0,0,0,0.6);
-            z-index: 51;
-            pointer-events: none;
-            will-change: transform;
+        .svg-butterfly i {
+            animation: butterflyFlutter 0.8s ease-in-out infinite alternate;
         }
 
+        /* Partículas de luz / Vagalumes */
+        @keyframes firefly {
+            0%, 100% { opacity: 0; transform: scale(0.8) translate(0, 0); }
+            50% { opacity: 1; transform: scale(1.2) translate(var(--rx), var(--ry)); box-shadow: 0 0 8px #fef08a; }
+        }
         .particle {
             position: absolute;
+            width: 3px; height: 3px;
             border-radius: 50%;
             background-color: #fef08a;
             pointer-events: none;
             z-index: 10;
         }
 
-        .leaf {
-            position: absolute;
-            font-size: 1.5rem;
-            color: #22c55e;
-            text-shadow: 0 5px 5px rgba(0,0,0,0.5);
-            pointer-events: none;
-            z-index: 45;
-        }
-
-        /* Classes utilitárias de transição de tela */
+        /* --- SISTEMA DE TELAS (Responsivo e Suave) --- */
         .screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            position: absolute;
+            top: 0; left: 0; width: 100%; min-height: 100%;
             z-index: 100;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 1.5s ease-in-out, visibility 1.5s;
-            overflow-y: auto;
-            padding: 2rem 1rem;
+            transition: opacity 2s ease-in-out, visibility 2s;
+            padding: 1.5rem;
         }
+        
+        /* Layout Mobile First ajustado */
+        @media (min-width: 768px) {
+            .screen { padding: 3rem; }
+            .glass-panel { padding: 3rem 4rem; }
+        }
+        
         .hidden-screen { opacity: 0; visibility: hidden; pointer-events: none; }
         .active-screen { opacity: 1; visibility: visible; pointer-events: auto; }
 
-        /* Botões Mágicos */
-        .btn-magic {
-            background: linear-gradient(135deg, #166534 0%, #14532d 100%);
-            border: 2px solid #4ade80;
-            box-shadow: 0 0 15px rgba(74, 222, 128, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.1);
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            position: relative;
-            overflow: hidden;
-        }
-        .btn-magic::after {
-            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%);
-            opacity: 0; transform: scale(0.5); transition: opacity 0.3s, transform 0.3s;
-        }
-        .btn-magic:hover { transform: scale(1.05) translateY(-5px); box-shadow: 0 10px 25px rgba(74, 222, 128, 0.6); }
-        .btn-magic:hover::after { opacity: 1; transform: scale(1); }
+        /* Scroll customizado */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--forest-dark); }
+        ::-webkit-scrollbar-thumb { background: #166534; border-radius: 10px; }
 
     </style>
 </head>
 <body>
 
-    <!-- ÁUDIOS -->
-    <audio id="audio-entrance" src="https://cdn.pixabay.com/audio/2022/03/15/audio_2db6e30b8b.mp3" preload="auto"></audio> <!-- Folhas/Vento/Magia -->
-    <audio id="audio-bg" src="https://cdn.pixabay.com/audio/2022/01/18/audio_d0a13f69d2.mp3" loop preload="auto"></audio> <!-- Floresta/Pássaros/Música suave -->
-
-    <!-- BACKGROUND PARALLAX -->
+    <!-- ÁUDIOS (Estilo Disney / Magia / Princesa) -->
+    <!-- Som de harpa, magia, natureza e orquestra suave -->
+    <audio id="audio-magic" src="https://cdn.pixabay.com/audio/2022/10/24/audio_34b3e8a4a5.mp3" loop preload="auto"></audio> 
+    
+    <!-- BACKGROUND PARALLAX DINÂMICO -->
     <div id="viewport">
         <div class="layer layer-back" id="bg-back"></div>
-        <div class="layer layer-mid" id="bg-mid"></div>
+        <div class="layer layer-light"></div>
         <div id="particles-container" class="absolute inset-0 z-10 pointer-events-none"></div>
-        <div id="animals-container" class="absolute inset-0 z-50 pointer-events-none perspective-[1000px]"></div>
+        
+        <!-- Elementos Vetoriais Animados (Sem emojis) -->
+        <div id="nature-overlay" class="absolute inset-0 z-20 pointer-events-none">
+            <!-- Borboletas (Usando FontAwesome em vez de emojis) -->
+            <div class="svg-butterfly" style="left: -10%; top: 60%; animation-duration: 25s; animation-delay: 2s;">
+                <i class="fa-brands fa-pagelines text-2xl"></i>
+            </div>
+            <div class="svg-butterfly" style="left: -20%; top: 40%; animation-duration: 30s; animation-delay: 5s; color: #60a5fa;">
+                <i class="fa-brands fa-pagelines text-xl"></i>
+            </div>
+        </div>
     </div>
 
     <!-- TELA 1: A ENTRADA -->
-    <div id="screen-entrance" class="screen active-screen bg-black/40">
-        <div class="text-center z-10">
-            <i class="fa-solid fa-tree text-6xl text-green-500/80 mb-6 drop-shadow-[0_0_15px_rgba(34,197,94,0.8)] animate-pulse"></i>
-            <h1 class="text-6xl md:text-8xl font-bold text-amber-100 mb-12 tracking-widest magic-glow">Bosque Encantado</h1>
-            <p class="text-xl md:text-2xl text-green-200 mb-12 font-cursive italic tracking-wider">Uma celebração mágica aguarda...</p>
+    <div id="screen-entrance" class="screen active-screen">
+        <div class="text-center z-10 max-w-2xl" style="animation: floatSlow 6s ease-in-out infinite;">
+            <i class="fa-brands fa-envira text-5xl md:text-6xl text-green-400/80 mb-6 drop-shadow-[0_0_15px_rgba(74,222,128,0.5)]"></i>
+            <h1 class="text-5xl md:text-7xl font-bold text-amber-100 mb-8 tracking-widest drop-shadow-lg font-cinzel">Bosque Encantado</h1>
             
-            <button id="btn-enter" class="btn-magic px-10 py-5 rounded-full text-2xl font-cinzel text-white flex items-center justify-center mx-auto">
-                <i class="fa-solid fa-key mr-3 text-amber-300"></i> Revelar os Segredos do Bosque
+            <button id="btn-enter" class="mt-8 px-8 md:px-10 py-4 bg-transparent border-2 border-green-500/50 hover:bg-green-900/40 hover:border-green-400 text-amber-50 rounded-full text-lg md:text-xl font-cinzel tracking-widest transition-all duration-500 backdrop-blur-sm">
+                <i class="fa-solid fa-wand-magic-sparkles mr-3 text-amber-300"></i> Revelar Magia
             </button>
         </div>
     </div>
 
-    <!-- TELA 2: O GUARDIÃO (FILTRO RSVP) -->
+    <!-- TELA 2: PERGUNTA INICIAL (Sem termos pesados, minimalista) -->
     <div id="screen-gate" class="screen hidden-screen">
-        <div class="glass-panel max-w-2xl w-11/12 p-10 md:p-14 rounded-3xl text-center relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-900 via-green-500 to-green-900"></div>
+        <div class="glass-panel w-full max-w-lg rounded-3xl text-center relative overflow-hidden p-8 md:p-12">
+            <h2 class="text-2xl md:text-3xl text-amber-100 font-cinzel mb-10 leading-relaxed">Você nos dará a honra de sua presença nesta celebração?</h2>
             
-            <i class="fa-solid fa-khanda text-5xl text-amber-300 mb-6 drop-shadow-md"></i>
-            <h2 class="text-4xl md:text-5xl text-white font-cinzel mb-4">O Guardião Pergunta:</h2>
-            <p class="text-xl text-green-200 mb-10 font-cursive text-2xl">Você aceita o chamado para o nosso Bosque?</p>
-            
-            <div class="flex flex-col gap-6">
-                <button id="btn-yes" class="px-8 py-5 bg-gradient-to-r from-green-800 to-green-600 hover:from-green-700 hover:to-green-500 text-white rounded-2xl text-xl font-bold shadow-[0_10px_20px_rgba(22,101,52,0.5)] transition-transform transform hover:scale-105 border border-green-400/50 flex items-center justify-center">
-                    <i class="fa-solid fa-check mr-3 text-green-200 text-2xl"></i> Sim, com certeza!
+            <div class="flex flex-col gap-4">
+                <button id="btn-yes" class="w-full px-6 py-4 bg-green-900/60 hover:bg-green-800 text-green-50 rounded-2xl text-lg font-cinzel tracking-wider border border-green-700/50 transition-all flex items-center justify-center">
+                    <i class="fa-solid fa-leaf mr-3"></i> Sim, estarei lá
                 </button>
-                <button id="btn-no" class="px-8 py-5 bg-gradient-to-r from-red-900 to-red-800 hover:from-red-800 hover:to-red-700 text-white rounded-2xl text-xl font-bold shadow-[0_10px_20px_rgba(153,27,27,0.5)] transition-transform transform hover:scale-105 border border-red-500/50 flex items-center justify-center">
-                    <i class="fa-solid fa-xmark mr-3 text-red-300 text-2xl"></i> Infelizmente, não poderei
+                <button id="btn-no" class="w-full px-6 py-4 bg-transparent hover:bg-white/5 text-gray-400 hover:text-gray-200 rounded-2xl text-sm font-cinzel tracking-wider border border-transparent transition-all">
+                    Infelizmente, não poderei
                 </button>
             </div>
         </div>
@@ -257,368 +224,272 @@
 
     <!-- TELA 3: FORMULÁRIO DE DESISTÊNCIA (Não vai) -->
     <div id="screen-regret" class="screen hidden-screen">
-        <div class="glass-panel max-w-lg w-11/12 p-8 md:p-12 rounded-3xl text-center relative">
-            <i class="fa-solid fa-dove text-5xl text-amber-200 mb-6 opacity-80 animate-bounce"></i>
-            <h2 class="text-3xl md:text-4xl text-white font-cinzel mb-4">Sentiremos sua falta!</h2>
-            <p class="text-gray-300 mb-8 text-md font-serif italic">O bosque não será o mesmo sem você. Deixe um recadinho carinhoso para guardarmos de lembrança.</p>
+        <div class="glass-panel w-full max-w-md rounded-3xl text-center relative p-8 md:p-10">
+            <i class="fa-solid fa-envelope-open-text text-4xl text-amber-200/50 mb-6"></i>
+            <h2 class="text-2xl md:text-3xl text-amber-50 font-cinzel mb-4">Sentiremos sua falta</h2>
+            <p class="text-gray-400 mb-8 text-sm md:text-base leading-relaxed">Deixe um recadinho carinhoso para guardarmos de lembrança.</p>
             
-            <form id="form-regret" class="flex flex-col gap-5 text-left">
+            <form id="form-regret" class="flex flex-col gap-4 text-left">
                 <input type="hidden" name="status" value="Não vai">
                 <div>
-                    <label class="block text-amber-200 text-sm font-bold mb-2 uppercase tracking-wider"><i class="fa-solid fa-signature mr-2"></i> Nome Completo</label>
-                    <input type="text" name="nome" required class="w-full px-5 py-4 rounded-xl bg-black/60 border-2 border-green-800/80 text-white focus:outline-none focus:border-amber-400 transition" placeholder="Seu nome mágico...">
+                    <label class="block text-amber-200/80 text-xs font-bold mb-2 uppercase tracking-widest"><i class="fa-regular fa-user mr-2"></i> Nome</label>
+                    <input type="text" name="nome" required class="w-full px-4 py-3 rounded-xl bg-black/40 border border-green-900/80 text-white focus:outline-none focus:border-amber-500/50 transition font-sans text-sm">
                 </div>
                 <div>
-                    <label class="block text-amber-200 text-sm font-bold mb-2 uppercase tracking-wider"><i class="fa-brands fa-whatsapp mr-2"></i> Telefone / WhatsApp</label>
-                    <input type="tel" name="telefone" required class="w-full px-5 py-4 rounded-xl bg-black/60 border-2 border-green-800/80 text-white focus:outline-none focus:border-amber-400 transition" placeholder="(00) 00000-0000">
+                    <label class="block text-amber-200/80 text-xs font-bold mb-2 uppercase tracking-widest"><i class="fa-regular fa-comment mr-2"></i> Mensagem</label>
+                    <textarea name="mensagem" required rows="3" class="w-full px-4 py-3 rounded-xl bg-black/40 border border-green-900/80 text-white focus:outline-none focus:border-amber-500/50 transition font-sans text-sm resize-none"></textarea>
                 </div>
-                <div>
-                    <label class="block text-amber-200 text-sm font-bold mb-2 uppercase tracking-wider"><i class="fa-solid fa-envelope-open-text mr-2"></i> Mensagem Carinhosa</label>
-                    <textarea name="mensagem" required rows="4" class="w-full px-5 py-4 rounded-xl bg-black/60 border-2 border-green-800/80 text-white focus:outline-none focus:border-amber-400 transition" placeholder="Escreva seu recadinho..."></textarea>
-                </div>
-                <button type="submit" class="mt-4 px-8 py-5 bg-amber-700 hover:bg-amber-600 text-white rounded-xl text-xl font-bold shadow-[0_10px_20px_rgba(180,83,9,0.5)] transition-transform transform hover:scale-105 flex justify-center items-center">
-                    <i class="fa-solid fa-paper-plane mr-3"></i> Enviar Mensagem
+                <button type="submit" class="mt-4 px-6 py-4 bg-amber-900/60 hover:bg-amber-800 text-amber-50 rounded-xl text-sm md:text-base font-cinzel tracking-widest border border-amber-700/50 transition-all">
+                    Enviar com carinho
                 </button>
             </form>
         </div>
     </div>
 
     <!-- TELA 4: CONVITE PRINCIPAL OFICIAL -->
-    <div id="screen-main" class="screen hidden-screen justify-start pt-10 pb-32">
-        <div class="max-w-4xl w-full flex flex-col items-center gap-12">
+    <div id="screen-main" class="screen hidden-screen justify-start pt-8 md:pt-16 pb-24">
+        
+        <div class="max-w-3xl w-full flex flex-col items-center gap-10">
             
-            <!-- Cabeçalho -->
-            <div class="glass-panel p-10 md:p-16 rounded-[3rem] w-full text-center relative overflow-hidden">
-                <!-- Efeito de luz no canto -->
-                <div class="absolute -top-20 -left-20 w-64 h-64 bg-amber-500/20 rounded-full blur-[80px]"></div>
+            <!-- Cabeçalho Principal Minimalista -->
+            <div class="glass-panel p-8 md:p-14 rounded-3xl w-full text-center">
+                <h1 class="text-4xl md:text-6xl text-amber-50 font-cinzel mb-8 tracking-wide drop-shadow-md">Celebração no Bosque</h1>
                 
-                <h2 class="text-sm md:text-xl text-amber-400 uppercase tracking-[0.4em] mb-4 font-bold"><i class="fa-solid fa-crown mr-2"></i>Convidado de Honra</h2>
-                <h1 class="text-5xl md:text-7xl text-white font-cinzel mb-8 drop-shadow-2xl">Celebração no Bosque</h1>
-                
-                <div class="flex flex-col md:flex-row justify-center items-center gap-10 text-2xl mt-8 bg-black/30 p-6 rounded-3xl border border-white/10">
-                    <div class="flex flex-col items-center">
-                        <i class="fa-regular fa-calendar-days text-4xl text-amber-300 mb-3"></i>
-                        <span class="font-bold text-white tracking-widest">09/11/2027</span>
+                <div class="flex flex-col md:flex-row justify-center items-center gap-6 md:gap-12 mt-4 text-lg md:text-xl font-cinzel">
+                    <div class="flex flex-col items-center opacity-90">
+                        <i class="fa-regular fa-calendar text-2xl md:text-3xl text-amber-300/80 mb-3"></i>
+                        <span class="text-white tracking-widest">09/01/2027</span>
                     </div>
-                    <div class="hidden md:block w-px h-20 bg-green-500/50"></div>
-                    <div class="flex flex-col items-center">
-                        <i class="fa-solid fa-hourglass-start text-4xl text-amber-300 mb-3"></i>
-                        <span class="font-bold text-white tracking-widest">13:30 às 17:00</span>
+                    <div class="hidden md:block w-px h-12 bg-green-500/30"></div>
+                    <div class="flex flex-col items-center opacity-90">
+                        <i class="fa-regular fa-clock text-2xl md:text-3xl text-amber-300/80 mb-3"></i>
+                        <span class="text-white tracking-widest">13:30 às 17:00</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Contagem Regressiva (Tema Musgo/Flores) -->
-            <div class="w-full text-center py-10">
-                <h3 class="text-3xl md:text-4xl font-cinzel text-white mb-10 magic-glow"><i class="fa-solid fa-wand-magic-sparkles mr-3"></i>O feitiço se realiza em...</h3>
-                <div class="flex justify-center items-center gap-6 md:gap-12" id="countdown-container">
-                    <div class="flex flex-col items-center">
-                        <span id="cd-days" class="text-7xl md:text-9xl moss-text floral-decor">00</span>
-                        <span class="text-xl md:text-2xl text-green-400 mt-4 font-cinzel font-bold tracking-[0.2em] uppercase">Dias</span>
+            <!-- Contagem Regressiva (Musgo/Clean) -->
+            <div class="w-full text-center py-6">
+                <h3 class="text-xl md:text-2xl font-cinzel text-amber-100/70 mb-8 tracking-widest"><i class="fa-solid fa-hourglass-half mr-3 opacity-60"></i>O encanto se inicia em</h3>
+                
+                <div class="flex justify-center items-center gap-4 md:gap-10" id="countdown-container">
+                    <div class="flex flex-col items-center w-20 md:w-32">
+                        <span id="cd-days" class="text-5xl md:text-7xl moss-text font-cinzel">00</span>
+                        <span class="text-xs md:text-sm text-green-300/80 mt-3 font-cinzel tracking-[0.3em] uppercase">Dias</span>
                     </div>
-                    <span class="text-5xl md:text-7xl text-green-700/60 mb-10">:</span>
-                    <div class="flex flex-col items-center">
-                        <span id="cd-hours" class="text-7xl md:text-9xl moss-text floral-decor">00</span>
-                        <span class="text-xl md:text-2xl text-green-400 mt-4 font-cinzel font-bold tracking-[0.2em] uppercase">Horas</span>
+                    <span class="text-3xl md:text-5xl text-green-800/40 mb-8">:</span>
+                    <div class="flex flex-col items-center w-20 md:w-32">
+                        <span id="cd-hours" class="text-5xl md:text-7xl moss-text font-cinzel">00</span>
+                        <span class="text-xs md:text-sm text-green-300/80 mt-3 font-cinzel tracking-[0.3em] uppercase">Horas</span>
                     </div>
-                    <span class="text-5xl md:text-7xl text-green-700/60 mb-10">:</span>
-                    <div class="flex flex-col items-center">
-                        <span id="cd-mins" class="text-7xl md:text-9xl moss-text floral-decor">00</span>
-                        <span class="text-xl md:text-2xl text-green-400 mt-4 font-cinzel font-bold tracking-[0.2em] uppercase">Min</span>
+                    <span class="text-3xl md:text-5xl text-green-800/40 mb-8">:</span>
+                    <div class="flex flex-col items-center w-20 md:w-32">
+                        <span id="cd-mins" class="text-5xl md:text-7xl moss-text font-cinzel">00</span>
+                        <span class="text-xs md:text-sm text-green-300/80 mt-3 font-cinzel tracking-[0.3em] uppercase">Min</span>
                     </div>
                 </div>
             </div>
 
             <!-- Botão Cardápio Modal -->
-            <button id="btn-open-menu" class="group relative px-10 py-6 bg-gradient-to-br from-amber-700 to-amber-900 rounded-[2rem] overflow-hidden shadow-[0_15px_30px_rgba(180,83,9,0.6)] transition-all hover:scale-105 hover:shadow-[0_20px_40px_rgba(180,83,9,0.8)] border-2 border-amber-400/50 w-full max-w-md">
-                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/wood-pattern.png')] opacity-30 group-hover:opacity-50 transition-opacity"></div>
-                <span class="relative z-10 flex items-center justify-center text-3xl font-cinzel font-bold text-amber-100">
-                    <i class="fa-solid fa-scroll mr-4"></i> Revelar Banquete
-                </span>
+            <button id="btn-open-menu" class="w-full max-w-sm px-8 py-5 bg-black/40 hover:bg-black/60 rounded-2xl backdrop-blur-md border border-amber-600/30 transition-all text-amber-100 font-cinzel tracking-widest text-lg md:text-xl flex items-center justify-center mx-auto">
+                <i class="fa-solid fa-utensils mr-4 opacity-70"></i> Ver o Banquete
             </button>
 
-            <!-- Endereço e Mapas -->
-            <div class="glass-panel p-10 rounded-[3rem] w-full text-center relative">
-                <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-forest-bg border-2 border-green-500/50 p-6 rounded-full shadow-[0_0_20px_rgba(34,197,94,0.5)]">
-                    <i class="fa-solid fa-map-location-dot text-5xl text-amber-300"></i>
-                </div>
+            <!-- Endereço e Mapas (Responsivo) -->
+            <div class="glass-panel p-8 md:p-12 rounded-3xl w-full text-center">
+                <i class="fa-solid fa-location-dot text-3xl text-green-500/60 mb-6"></i>
+                <p class="text-xl md:text-2xl text-amber-50 mb-10 font-cinzel tracking-wider">Avenida do Anastácio, 137</p>
                 
-                <h3 class="text-3xl font-cinzel text-white mt-8 mb-4">Localização Secreta</h3>
-                <p class="text-2xl text-green-100 mb-10 font-bold tracking-wide bg-black/40 py-4 px-6 rounded-2xl inline-block border border-green-800">Avenida do Anastácio, 137</p>
-                
-                <p class="text-sm text-gray-400 mb-4 uppercase tracking-[0.2em] font-bold">Traçar rota com:</p>
-                <div class="flex flex-col md:flex-row justify-center gap-4">
-                    <a href="https://waze.com/ul?q=Avenida+do+Anastácio,+137&navigate=yes" target="_blank" class="flex-1 flex items-center justify-center px-6 py-4 bg-black/50 border-2 border-[#33ccff]/40 hover:border-[#33ccff] hover:bg-[#33ccff]/10 text-white rounded-2xl transition-all text-lg font-bold">
-                        <i class="fa-brands fa-waze text-3xl mr-3 text-[#33ccff]"></i> Waze
+                <div class="flex flex-col sm:flex-row justify-center gap-4 w-full">
+                    <a href="https://waze.com/ul?q=Avenida+do+Anastácio,+137&navigate=yes" target="_blank" class="flex-1 flex items-center justify-center px-4 py-4 bg-[#33ccff]/10 border border-[#33ccff]/30 hover:bg-[#33ccff]/20 text-white rounded-xl transition text-sm md:text-base font-sans tracking-wide">
+                        <i class="fa-brands fa-waze text-xl mr-3 text-[#33ccff]"></i> Waze
                     </a>
-                    <a href="https://www.google.com/maps/search/?api=1&query=Avenida+do+Anastácio,+137" target="_blank" class="flex-1 flex items-center justify-center px-6 py-4 bg-black/50 border-2 border-[#34a853]/40 hover:border-[#34a853] hover:bg-[#34a853]/10 text-white rounded-2xl transition-all text-lg font-bold">
-                        <i class="fa-brands fa-google text-3xl mr-3 text-[#34a853]"></i> Google Maps
+                    <a href="https://www.google.com/maps/search/?api=1&query=Avenida+do+Anastácio,+137" target="_blank" class="flex-1 flex items-center justify-center px-4 py-4 bg-[#34a853]/10 border border-[#34a853]/30 hover:bg-[#34a853]/20 text-white rounded-xl transition text-sm md:text-base font-sans tracking-wide">
+                        <i class="fa-brands fa-google text-xl mr-3 text-[#34a853]"></i> Maps
                     </a>
-                    <a href="http://maps.apple.com/?q=Avenida+do+Anastácio,+137" target="_blank" class="flex-1 flex items-center justify-center px-6 py-4 bg-black/50 border-2 border-gray-400/40 hover:border-gray-200 hover:bg-gray-500/10 text-white rounded-2xl transition-all text-lg font-bold">
-                        <i class="fa-brands fa-apple text-3xl mr-3 text-gray-200"></i> Apple Maps
+                    <a href="http://maps.apple.com/?q=Avenida+do+Anastácio,+137" target="_blank" class="flex-1 flex items-center justify-center px-4 py-4 bg-gray-500/10 border border-gray-400/30 hover:bg-gray-500/20 text-white rounded-xl transition text-sm md:text-base font-sans tracking-wide">
+                        <i class="fa-brands fa-apple text-xl mr-3 text-gray-200"></i> Apple Maps
                     </a>
                 </div>
             </div>
-
-            <!-- Formulário Confirmação (Vai) -->
-            <div class="glass-panel p-10 md:p-14 rounded-[3rem] w-full mt-8">
-                <h3 class="text-3xl font-cinzel text-amber-300 mb-8 text-center border-b-2 border-green-800/50 pb-6"><i class="fa-solid fa-feather-pointed mr-3"></i>Selar Registro de Passagem</h3>
+            
+            <!-- Confirmação Completa (Já disse "Sim", preenchendo os dados) -->
+            <div class="glass-panel p-8 md:p-12 rounded-3xl w-full text-center mt-4">
+                <h3 class="text-xl md:text-2xl font-cinzel text-amber-100 mb-8 border-b border-green-800/30 pb-6">Detalhes da sua presença</h3>
                 
-                <form id="form-yes" class="flex flex-col gap-6 text-left">
+                <form id="form-yes" class="flex flex-col gap-5 text-left max-w-xl mx-auto">
                     <input type="hidden" name="status" value="Confirmado">
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-amber-200/70 text-xs font-bold mb-2 uppercase tracking-widest"><i class="fa-regular fa-user mr-2"></i> Nome Completo</label>
+                        <input type="text" name="nome" required class="w-full px-4 py-3 rounded-xl bg-black/40 border border-green-900/80 text-white focus:outline-none focus:border-amber-500/50 transition font-sans text-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-amber-200/70 text-xs font-bold mb-2 uppercase tracking-widest"><i class="fa-solid fa-phone mr-2"></i> Telefone / WhatsApp</label>
+                        <input type="tel" name="telefone" required class="w-full px-4 py-3 rounded-xl bg-black/40 border border-green-900/80 text-white focus:outline-none focus:border-amber-500/50 transition font-sans text-sm">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 mt-2">
                         <div>
-                            <label class="block text-amber-200 text-sm font-bold mb-2 uppercase tracking-wider"><i class="fa-solid fa-signature mr-2"></i> Nome Completo</label>
-                            <input type="text" name="nome" required class="w-full px-5 py-4 rounded-xl bg-black/60 border-2 border-green-800/80 text-white focus:outline-none focus:border-amber-400 transition" placeholder="Nome do mago/fada">
+                            <label class="block text-amber-200/70 text-xs font-bold mb-2 uppercase tracking-widest text-center">Adultos</label>
+                            <input type="number" name="adultos" min="1" required class="w-full px-4 py-3 rounded-xl bg-black/40 border border-green-900/80 text-white focus:outline-none focus:border-amber-500/50 text-center font-sans">
                         </div>
                         <div>
-                            <label class="block text-amber-200 text-sm font-bold mb-2 uppercase tracking-wider"><i class="fa-brands fa-whatsapp mr-2"></i> WhatsApp</label>
-                            <input type="tel" name="telefone" required class="w-full px-5 py-4 rounded-xl bg-black/60 border-2 border-green-800/80 text-white focus:outline-none focus:border-amber-400 transition" placeholder="(00) 00000-0000">
+                            <label class="block text-amber-200/70 text-xs font-bold mb-2 uppercase tracking-widest text-center">Crianças</label>
+                            <input type="number" name="criancas" min="0" required class="w-full px-4 py-3 rounded-xl bg-black/40 border border-green-900/80 text-white focus:outline-none focus:border-amber-500/50 text-center font-sans">
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-amber-200 text-sm font-bold mb-2 uppercase tracking-wider"><i class="fa-solid fa-user-tie mr-2"></i> Qtd. Adultos</label>
-                            <input type="number" name="adultos" min="1" required class="w-full px-5 py-4 rounded-xl bg-black/60 border-2 border-green-800/80 text-white focus:outline-none focus:border-amber-400 text-center text-xl transition">
-                        </div>
-                        <div>
-                            <label class="block text-amber-200 text-sm font-bold mb-2 uppercase tracking-wider"><i class="fa-solid fa-child-reaching mr-2"></i> Qtd. Crianças</label>
-                            <input type="number" name="criancas" min="0" required class="w-full px-5 py-4 rounded-xl bg-black/60 border-2 border-green-800/80 text-white focus:outline-none focus:border-amber-400 text-center text-xl transition">
-                        </div>
-                    </div>
-
-                    <button type="submit" class="mt-8 px-8 py-5 bg-gradient-to-r from-green-700 to-green-900 hover:from-green-600 hover:to-green-800 text-white rounded-2xl text-2xl font-bold shadow-[0_15px_30px_rgba(21,128,61,0.5)] transition-transform transform hover:scale-105 border border-green-400/30 flex justify-center items-center">
-                        <i class="fa-solid fa-stamp mr-3 text-amber-300"></i> Confirmar Presença Oficial
+                    <button type="submit" class="mt-8 px-6 py-4 bg-green-900/80 hover:bg-green-800 text-green-50 rounded-xl text-base md:text-lg font-cinzel tracking-widest border border-green-600/40 transition-all shadow-lg">
+                        Confirmar
                     </button>
                 </form>
             </div>
-
-            <!-- Desistir após confirmar -->
-            <div class="mt-8 text-center bg-black/40 p-6 rounded-2xl border border-red-900/50">
-                <p class="text-gray-400 mb-4 text-sm font-serif italic"><i class="fa-solid fa-circle-info mr-2"></i>Imprevistos acontecem nas melhores florestas...</p>
-                <button id="btn-cancel-mind" class="px-8 py-3 bg-transparent border-2 border-red-800/80 hover:bg-red-900/40 text-red-300 rounded-full text-md font-bold transition-all flex items-center justify-center mx-auto">
-                    <i class="fa-solid fa-rotate-left mr-2"></i> Preciso cancelar minha ida
-                </button>
-            </div>
+            
+            <!-- Link discreto para desistir -->
+            <button id="btn-cancel-mind" class="mt-4 text-xs md:text-sm text-gray-500 hover:text-gray-300 font-sans uppercase tracking-widest transition-colors">
+                Alterar resposta (Não poderei ir)
+            </button>
 
         </div>
     </div>
 
-    <!-- MODAL CARDÁPIO -->
-    <div id="modal-menu-container" class="fixed inset-0 z-[100] flex items-center justify-center hidden opacity-0 transition-opacity duration-500 p-4">
-        <div class="absolute inset-0 bg-black/90 backdrop-blur-xl" id="bg-close-menu"></div>
+    <!-- MODAL CARDÁPIO MINIMALISTA -->
+    <div id="modal-menu-container" class="fixed inset-0 z-[100] flex items-center justify-center hidden opacity-0 transition-opacity duration-700 p-4">
+        <div class="absolute inset-0 bg-black/95 backdrop-blur-xl" id="bg-close-menu"></div>
         
-        <!-- Pergaminho Design -->
-        <div id="menu-modal" class="relative z-10 w-full max-w-xl max-h-[85vh] overflow-y-auto rounded-[2rem] shadow-[0_0_50px_rgba(180,83,9,0.3)] p-8 md:p-12 text-green-950 border-4 border-amber-800/50" style="background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);">
-            
-            <button id="btn-close-menu" class="absolute top-6 right-6 text-amber-900 hover:text-red-700 text-4xl transition-transform hover:rotate-90">
-                <i class="fa-solid fa-circle-xmark"></i>
+        <div id="menu-modal" class="relative z-10 w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-3xl bg-[#080d08] border border-green-900/50 p-8 md:p-12 shadow-2xl">
+            <button id="btn-close-menu" class="absolute top-6 right-6 text-gray-500 hover:text-amber-200 text-2xl transition">
+                <i class="fa-solid fa-xmark"></i>
             </button>
             
-            <div class="text-center mb-10 border-b-2 border-amber-900/20 pb-8">
-                <h2 class="text-4xl md:text-5xl font-cinzel font-bold text-amber-900 mb-3"><i class="fa-solid fa-champagne-glasses mr-3 text-amber-600"></i>O Banquete</h2>
-                <div class="inline-flex items-center justify-center bg-amber-100 px-6 py-2 rounded-full border border-amber-300">
-                    <i class="fa-solid fa-wand-sparkles mr-2 text-amber-600"></i> 
-                    <p class="text-sm font-bold text-amber-900">Crianças até 7 anos são cortesia!</p>
-                </div>
+            <div class="text-center mb-10 border-b border-green-900/30 pb-8">
+                <h2 class="text-3xl md:text-4xl font-cinzel text-amber-100 tracking-widest mb-3">O Banquete</h2>
+                <p class="text-xs font-sans text-green-400/60 uppercase tracking-[0.2em]">Crianças até 7 anos são cortesia</p>
             </div>
 
-            <div class="space-y-10 text-md font-medium text-gray-800 font-serif">
+            <div class="space-y-10 text-sm md:text-base font-sans font-light text-gray-300">
                 
-                <!-- Entradas -->
-                <div class="relative bg-white/60 p-6 rounded-2xl border border-amber-200 shadow-sm">
-                    <div class="absolute -top-5 left-1/2 -translate-x-1/2 bg-white px-4 border border-amber-200 rounded-full">
-                        <h3 class="text-xl font-cinzel font-bold text-amber-900"><i class="fa-solid fa-fire-burner mr-2 text-amber-600"></i>Salgados & Entradas</h3>
-                    </div>
-                    <ul class="list-none space-y-3 mt-4 text-center">
-                        <li><i class="fa-solid fa-leaf text-green-600 text-xs mr-2"></i> Batata Frita & Mini Pastel</li>
-                        <li><i class="fa-solid fa-leaf text-green-600 text-xs mr-2"></i> Mini Dog & Coxinha</li>
-                        <li><i class="fa-solid fa-leaf text-green-600 text-xs mr-2"></i> Bolinho de Queijo & Croquete de Calabresa</li>
-                        <li><i class="fa-solid fa-leaf text-green-600 text-xs mr-2"></i> Bolinho de Carne & Trouxinha</li>
-                    </ul>
+                <div class="text-center">
+                    <h3 class="text-lg font-cinzel text-amber-200/80 mb-4 tracking-widest"><i class="fa-solid fa-leaf text-xs mr-2 opacity-50"></i> Salgados</h3>
+                    <p class="leading-relaxed opacity-90">
+                        Batata Frita • Mini Pastel<br>
+                        Mini Dog • Coxinha<br>
+                        Bolinho de Queijo • Croquete de Calabresa<br>
+                        Bolinho de Carne • Trouxinha
+                    </p>
                 </div>
 
-                <!-- Pratos Principais -->
-                <div class="relative bg-white/60 p-6 rounded-2xl border border-amber-200 shadow-sm">
-                    <div class="absolute -top-5 left-1/2 -translate-x-1/2 bg-white px-4 border border-amber-200 rounded-full">
-                        <h3 class="text-xl font-cinzel font-bold text-amber-900"><i class="fa-solid fa-bowl-food mr-2 text-amber-600"></i>Pratos Principais</h3>
-                    </div>
-                    <p class="text-xs text-center text-amber-700 mb-4 italic font-bold mt-2">Acompanha molho ao sugo e branco com saladas.</p>
-                    <ul class="list-none space-y-3 text-center">
-                        <li class="font-bold text-lg text-amber-900 bg-amber-50 py-2 rounded-lg"><i class="fa-solid fa-star text-amber-500 mr-2 text-sm"></i> Polenta Mole à Bolonhesa</li>
-                        <li><i class="fa-solid fa-leaf text-green-600 text-xs mr-2"></i> Ravioli</li>
-                        <li><i class="fa-solid fa-leaf text-green-600 text-xs mr-2"></i> Penne & Capelete</li>
-                        <li><i class="fa-solid fa-leaf text-green-600 text-xs mr-2"></i> Nhoque</li>
-                    </ul>
+                <div class="text-center">
+                    <h3 class="text-lg font-cinzel text-amber-200/80 mb-4 tracking-widest"><i class="fa-solid fa-leaf text-xs mr-2 opacity-50"></i> Prato Principal</h3>
+                    <p class="text-amber-500/80 font-semibold mb-2">Polenta Mole à Bolonhesa</p>
+                    <p class="leading-relaxed opacity-90">
+                        Ravioli • Penne • Capelete • Nhoque
+                    </p>
+                    <p class="text-xs text-gray-500 mt-2 italic">Acompanha molho ao sugo e branco com saladas.</p>
                 </div>
 
-                <!-- Doces e Bolo -->
-                <div class="relative bg-white/60 p-6 rounded-2xl border border-amber-200 shadow-sm">
-                    <div class="absolute -top-5 left-1/2 -translate-x-1/2 bg-white px-4 border border-amber-200 rounded-full">
-                        <h3 class="text-xl font-cinzel font-bold text-amber-900"><i class="fa-solid fa-cake-candles mr-2 text-amber-600"></i>Doces & Bolo</h3>
-                    </div>
-                    <div class="text-center mt-4">
-                        <p class="font-bold text-amber-800 mb-2 border-b border-amber-200 inline-block pb-1">Doces</p>
-                        <p class="mb-4">Brigadeiro & Beijinho</p>
-                        
-                        <p class="font-bold text-amber-800 mb-2 border-b border-amber-200 inline-block pb-1">Sabores de Bolo</p>
-                        <p class="text-sm leading-relaxed text-gray-600">
-                            Mousse de Chocolate • Prestígio • Brigadeiro<br>
-                            Morango c/ Brigadeiro • Mousse de Maracujá<br>
-                            Morango c/ Moça • Abacaxi c/ Moça<br>
-                            Ninho Cremoso • Ninho c/ Morango<br>
-                            Sensação • Doce de Leite c/ Ameixa
-                        </p>
-                    </div>
+                <div class="text-center">
+                    <h3 class="text-lg font-cinzel text-amber-200/80 mb-4 tracking-widest"><i class="fa-solid fa-leaf text-xs mr-2 opacity-50"></i> Doces & Bolo</h3>
+                    <p class="mb-3 opacity-90">Brigadeiro • Beijinho</p>
+                    <p class="leading-relaxed opacity-80 text-xs">
+                        Mousse de Chocolate • Prestígio • Brigadeiro<br>
+                        Morango c/ Brigadeiro • Mousse de Maracujá<br>
+                        Morango c/ Moça • Abacaxi c/ Moça<br>
+                        Ninho Cremoso • Ninho c/ Morango<br>
+                        Sensação • Doce de Leite c/ Ameixa
+                    </p>
                 </div>
 
-                <!-- Bebidas -->
-                <div class="relative bg-white/60 p-6 rounded-2xl border border-amber-200 shadow-sm text-center mt-12">
-                    <div class="absolute -top-5 left-1/2 -translate-x-1/2 bg-white px-4 border border-amber-200 rounded-full">
-                        <h3 class="text-xl font-cinzel font-bold text-amber-900"><i class="fa-solid fa-wine-glass mr-2 text-amber-600"></i>Bebidas & Saída</h3>
-                    </div>
-                    <p class="mt-4 mb-4">Refrigerantes, Suco, Água</p>
-                    <div class="bg-amber-100 p-4 rounded-xl border border-amber-300">
-                        <p class="font-bold text-amber-900 uppercase tracking-widest text-sm"><i class="fa-solid fa-mug-hot mr-2"></i> Mesa de Café Colonial</p>
-                        <p class="text-xs text-amber-700 italic mt-1">Servida na saída com petit four</p>
-                    </div>
+                <div class="text-center pt-6 border-t border-green-900/30">
+                    <h3 class="text-lg font-cinzel text-amber-200/80 mb-4 tracking-widest"><i class="fa-solid fa-leaf text-xs mr-2 opacity-50"></i> Bebidas & Saída</h3>
+                    <p class="opacity-90 mb-4">Refrigerantes • Suco • Água</p>
+                    <p class="text-amber-600/80 uppercase tracking-widest text-xs font-semibold">Mesa de Café Colonial com Petit Four</p>
                 </div>
 
             </div>
         </div>
     </div>
 
-    <!-- SCRIPTS MÁGICOS -->
+    <!-- SCRIPTS -->
     <script>
-        // ---------------------------------------------------------
-        // CONFIGURAÇÃO DO GOOGLE APPS SCRIPT (COLE SUA URL AQUI)
-        // ---------------------------------------------------------
-        const SCRIPT_URL = "https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnRAD3vw8cMztDiDU0-hZlq8cUXSxL7kSY-fx0cuC6rmxe8s716zjxYaEsEPclt6BGyuV29YxDwLoRBxYqST5IQ5lnbJqDxzQxRdRqkLAbx0YZFHF4moiOShlTWJPgDVx0mxo-t6MCAe5mfFgNeYL7EyYsyMvEOAdPcNJ98TJMvvI3bcnWu2fVv4gHbf5yixyZkySrxL0V5S0lGId2D8gDhas11jJXuzj8uzZ6-sjpTOmnM8zByHoz3EHB9JPW6otqabqW42MJdaGwKLOOxSQEHHAD-vRw&lib=M7RXdJOW08Oqbam763tgYKxy6b25xx724"; 
+        // CONFIGURAÇÃO DA SUA URL
+        const SCRIPT_URL = "https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnRAD3vw8cMztDiDU0-hZlq8cUXSxL7kSY-fx0cuC6rmxe8s716zjxYaEsEPclt6BGyuV29YxDwLoRBxYqST5IQ5lnbJqDxzQxRdRqkLAbx0YZFHF4moiOShlTWJPgDVx0mxo-t6MCAe5mfFgNeYL7EyYsyMvEOAdPcNJ98TJMvvI3bcnWu2fVv4gHbf5yixyZkySrxL0V5S0lGId2D8gDhas11jJXuzj8uzZ6-sjpTOmnM8zByHoz3EHB9JPW6otqabqW42MJdaGwKLOOxSQEHHAD-vRw&lib=M7RXdJOW08Oqbam763tgYKxy6b25xx724";
 
-        const audioEntrance = document.getElementById('audio-entrance');
-        const audioBg = document.getElementById('audio-bg');
+        const audioMagic = document.getElementById('audio-magic');
+        const viewport = document.getElementById('viewport');
+        const particlesContainer = document.getElementById('particles-container');
         
         const screenEntrance = document.getElementById('screen-entrance');
         const screenGate = document.getElementById('screen-gate');
         const screenRegret = document.getElementById('screen-regret');
         const screenMain = document.getElementById('screen-main');
-        
-        const viewport = document.getElementById('viewport');
-        const particlesContainer = document.getElementById('particles-container');
-        const animalsContainer = document.getElementById('animals-container');
         const modalMenu = document.getElementById('modal-menu-container');
 
-        // Função de transição suave de telas
+        // Criação de partículas (vagalumes)
+        function createParticles() {
+            for(let i = 0; i < 25; i++) {
+                let p = document.createElement('div');
+                p.className = 'particle';
+                p.style.width = (Math.random() * 3 + 1) + 'px';
+                p.style.height = p.style.width;
+                p.style.left = Math.random() * 100 + 'vw';
+                p.style.top = Math.random() * 100 + 'vh';
+                p.style.setProperty('--rx', (Math.random() * 60 - 30) + 'px');
+                p.style.setProperty('--ry', (Math.random() * 60 - 30) + 'px');
+                p.style.animation = `firefly ${Math.random() * 4 + 4}s ease-in-out infinite alternate`;
+                p.style.animationDelay = Math.random() * 5 + 's';
+                particlesContainer.appendChild(p);
+            }
+        }
+        createParticles();
+
         function switchScreen(hideEl, showEl) {
             hideEl.classList.remove('active-screen');
             hideEl.classList.add('hidden-screen');
             
             setTimeout(() => {
                 showEl.classList.remove('hidden-screen');
-                // Força o reflow para garantir a animação CSS
                 void showEl.offsetWidth; 
                 showEl.classList.add('active-screen');
-            }, 1000);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 1500);
         }
 
-        // Sistema de Partículas (Vagalumes e Folhas)
-        function createParticles() {
-            // Vagalumes
-            for(let i = 0; i < 40; i++) {
-                let p = document.createElement('div');
-                p.className = 'particle';
-                let size = Math.random() * 4 + 1;
-                p.style.width = size + 'px';
-                p.style.height = size + 'px';
-                p.style.left = Math.random() * 100 + 'vw';
-                p.style.top = Math.random() * 100 + 'vh';
-                p.style.setProperty('--rx', (Math.random() * 100 - 50) + 'px');
-                p.style.setProperty('--ry', (Math.random() * 100 - 50) + 'px');
-                p.style.animation = `firefly ${Math.random() * 4 + 2}s ease-in-out infinite alternate`;
-                p.style.animationDelay = Math.random() * 5 + 's';
-                particlesContainer.appendChild(p);
-            }
-        }
-
-        // Animação Cinematográfica de Entrada (3D simulado)
-        function startEntranceAnimation() {
-            // Tocar Áudios
-            audioEntrance.volume = 0.8;
-            audioBg.volume = 0.3;
-            audioEntrance.play().catch(e => console.log('Autoplay bloqueado'));
+        // Animação Lenta de Entrada
+        document.getElementById('btn-enter').addEventListener('click', () => {
+            // Toca a música Princesa/Magia (lenta, clássica)
+            audioMagic.volume = 0.5;
+            audioMagic.play().catch(() => console.log('Áudio bloqueado pelo navegador'));
             
-            // Efeito Camera Zoom 3D no CSS
-            viewport.classList.add('zoom-in-3d');
+            // Inicia o Zoom In muito lento e profundo no Background (Parallax CSS)
+            viewport.classList.add('camera-walking');
             
-            // Gerar Folhas Voando em 3D
-            for(let i = 0; i < 15; i++) {
-                setTimeout(() => {
-                    let leaf = document.createElement('i');
-                    leaf.className = 'fa-solid fa-leaf leaf';
-                    leaf.style.left = Math.random() * 80 + 10 + 'vw';
-                    leaf.style.setProperty('--tx', (Math.random() * 400 - 200) + 'px');
-                    leaf.style.animation = `leafSpin ${Math.random() * 3 + 4}s linear forwards`;
-                    animalsContainer.appendChild(leaf);
-                    // Remove after animation
-                    setTimeout(() => leaf.remove(), 7000);
-                }, i * 300);
-            }
-
-            // Gerar Animais Correndo em 3D
-            const animals = ['🦌', '🦊', '🐇']; // Emojis que funcionam muito bem como arte
-            animals.forEach((animal, index) => {
-                setTimeout(() => {
-                    let a = document.createElement('div');
-                    a.className = 'animal-3d';
-                    a.innerText = animal;
-                    a.style.bottom = (10 + Math.random() * 20) + '%';
-                    a.style.animation = `run3D ${5 + Math.random() * 2}s cubic-bezier(0.25, 1, 0.5, 1) forwards`;
-                    animalsContainer.appendChild(a);
-                    setTimeout(() => a.remove(), 8000);
-                }, index * 800);
-            });
-
-            // Passáros / Borboletas em 3D
-            const flyers = ['🦋', '🕊️', '🦋'];
-            flyers.forEach((flyer, index) => {
-                setTimeout(() => {
-                    let f = document.createElement('div');
-                    f.className = 'bird-3d';
-                    f.innerText = flyer;
-                    f.style.top = (10 + Math.random() * 30) + '%';
-                    f.style.animation = `fly3D ${6 + Math.random() * 3}s linear forwards`;
-                    animalsContainer.appendChild(f);
-                    setTimeout(() => f.remove(), 10000);
-                }, 1500 + index * 1000);
-            });
-
-            // Mudar de tela
             switchScreen(screenEntrance, screenGate);
-
-            // Iniciar trilha sonora ambiente após o som de entrada
-            setTimeout(() => {
-                audioBg.play().catch(e => console.log('Autoplay bg bloqueado'));
-            }, 4000);
-        }
-
-        // Inicialização
-        createParticles();
-
-        // Listeners dos Botões de Fluxo
-        document.getElementById('btn-enter').addEventListener('click', startEntranceAnimation);
+        });
         
-        document.getElementById('btn-no').addEventListener('click', () => switchScreen(screenGate, screenRegret));
+        // Fluxo
+        document.getElementById('btn-no').addEventListener('click', () => {
+            viewport.classList.remove('camera-walking'); // Tira o zoom extremo se não for
+            switchScreen(screenGate, screenRegret);
+        });
         
         document.getElementById('btn-yes').addEventListener('click', () => { 
+            // Aprofunda ainda mais a câmera
+            viewport.classList.remove('camera-walking');
+            viewport.classList.add('camera-deep');
+            
             switchScreen(screenGate, screenMain); 
             startCountdown(); 
         });
         
-        document.getElementById('btn-cancel-mind').addEventListener('click', () => switchScreen(screenMain, screenRegret));
+        document.getElementById('btn-cancel-mind').addEventListener('click', () => {
+            viewport.classList.remove('camera-deep');
+            switchScreen(screenMain, screenRegret);
+        });
         
-        // Listeners do Modal
+        // Modal Cardápio
         document.getElementById('btn-open-menu').addEventListener('click', () => { 
             modalMenu.classList.remove('hidden'); 
             setTimeout(() => modalMenu.classList.remove('opacity-0'), 10); 
@@ -630,9 +501,10 @@
         document.getElementById('btn-close-menu').addEventListener('click', closeMenu);
         document.getElementById('bg-close-menu').addEventListener('click', closeMenu);
 
-        // Lógica da Contagem Regressiva
+        // Contagem regressiva corrigida para: 09/01/2027 às 13:30
         function startCountdown() {
-            const targetDate = new Date("2027-11-09T13:30:00").getTime();
+            // Formato ISO: YYYY-MM-DDTHH:mm:00
+            const targetDate = new Date("2027-01-09T13:30:00").getTime();
             
             const timer = setInterval(() => {
                 const now = new Date().getTime();
@@ -640,7 +512,7 @@
                 
                 if (distance < 0) {
                     clearInterval(timer);
-                    document.getElementById("countdown-container").innerHTML = "<h3 class='text-5xl md:text-7xl moss-text floral-decor'>A Magia Começou!</h3>";
+                    document.getElementById("countdown-container").innerHTML = "<h3 class='text-3xl md:text-5xl font-cinzel text-amber-200 tracking-widest'>A Celebração Começou!</h3>";
                     return;
                 }
                 
@@ -654,7 +526,7 @@
             }, 1000);
         }
 
-        // Lógica de Envio (Integração Google Apps Script)
+        // Submissão do Formulário
         function handleFormSubmit(formId) {
             const form = document.getElementById(formId);
             form.addEventListener('submit', (e) => {
@@ -662,31 +534,28 @@
                 
                 const btn = form.querySelector('button[type="submit"]');
                 const originalText = btn.innerHTML;
-                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-3 text-2xl"></i> Registrando Feitiço...';
+                btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Enviando...';
                 btn.disabled = true;
-                btn.classList.add('opacity-70', 'cursor-not-allowed');
-
-                const formData = new FormData(form);
-                const dataObj = Object.fromEntries(formData.entries());
+                btn.classList.add('opacity-50');
 
                 fetch(SCRIPT_URL, {
                     method: 'POST',
-                    body: JSON.stringify(dataObj),
+                    body: JSON.stringify(Object.fromEntries(new FormData(form).entries())),
                     headers: { 'Content-Type': 'application/json' },
-                    mode: 'no-cors' // Essencial para o Google Script
+                    mode: 'no-cors'
                 }).then(() => {
                     form.innerHTML = `
-                        <div class="text-center py-12 flex flex-col items-center">
-                            <i class="fa-solid fa-check-circle text-7xl text-green-500 mb-6 drop-shadow-[0_0_15px_rgba(34,197,94,0.8)] animate-pulse"></i>
-                            <h3 class="text-4xl font-cinzel text-white mb-4">Registro Concluído!</h3>
-                            <p class="text-xl text-green-200 font-serif italic">Os guardiões do bosque receberam sua mensagem.</p>
+                        <div class="text-center py-10 animate-fade-in">
+                            <i class="fa-regular fa-paper-plane text-4xl text-amber-200/50 mb-6"></i>
+                            <h3 class="text-2xl font-cinzel text-amber-50 mb-4">Mensagem Recebida</h3>
+                            <p class="text-sm text-gray-400 font-sans tracking-wide">Agradecemos de coração.</p>
                         </div>
                     `;
                 }).catch(err => {
-                    alert('Houve uma interferência mágica. Por favor, tente enviar novamente!');
+                    alert('Houve uma falha na conexão. Tente novamente.');
                     btn.innerHTML = originalText;
                     btn.disabled = false;
-                    btn.classList.remove('opacity-70', 'cursor-not-allowed');
+                    btn.classList.remove('opacity-50');
                 });
             });
         }
