@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convite: Bosque Encantado</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome para Ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --moss-green: #2d5a27;
+            --wood-brown: #5c4033;
+            --magic-gold: #f4d03f;
+        }
+
+        body {
+            font-family: 'Lora', serif;
+            background-color: #0f1c13;
+            color: #ecf0f1;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .font-cinzel {
+            font-family: 'Cinzel', serif;
+        }
+
+        /* Efeito de Texto de Musgo para a Contagem */
+        .moss-text {
+            background-image: url('https://images.unsplash.com/photo-1518331526435-021b4a520261?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');
+            background-size: cover;
+            background-position: center;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.6));
+            font-weight: 800;
+        }
+
+        /* Animações CSS */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+        
+        .fade-in { animation: fadeIn 1.5s ease-in forwards; }
+        .fade-out { animation: fadeOut 1.5s ease-out forwards; }
+
+        @keyframes runRight {
+            0% { transform: translateX(-10vw) scaleX(-1); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateX(110vw) scaleX(-1); opacity: 0; }
+        }
+
+        @keyframes flyAcross {
+            0% { transform: translate(-10vw, 20vh) scale(0.5); opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { transform: translate(110vw, -20vh) scale(1.5); opacity: 0; }
+        }
+
+        @keyframes flutter {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(15deg); }
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg) scale(0.8); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(360deg) scale(1.2); opacity: 0; }
+        }
+
+        .animal-run {
+            position: absolute;
+            font-size: 3rem;
+            color: #d35400; /* Cor de raposa/cervo */
+            animation: runRight 6s linear forwards;
+            z-index: 45;
+            bottom: 15%;
+            filter: drop-shadow(0px 5px 5px rgba(0,0,0,0.5));
+        }
+
+        .bird-fly {
+            position: absolute;
+            font-size: 2rem;
+            color: #3498db;
+            animation: flyAcross 8s linear forwards;
+            z-index: 46;
+        }
+
+        .butterfly {
+            position: absolute;
+            font-size: 1.5rem;
+            color: #e67e22;
+            animation: flyAcross 10s linear forwards, flutter 2s ease-in-out infinite;
+            z-index: 47;
+        }
+
+        .falling-leaf {
+            position: absolute;
+            font-size: 1.5rem;
+            color: #27ae60;
+            animation: fall 8s linear forwards;
+            z-index: 40;
+        }
+
+        /* Fundos Personalizados com as imagens fornecidas */
+        .bg-entrance {
+            background-image: url('image_ac7a21.jpg'); /* Caminho iluminado */
+            background-size: cover;
+            background-position: center;
+        }
+
+        .bg-forest-deep {
+            background-image: url('image_ac28a8.jpg'); /* Bosque escuro/cogumelos */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .glass-panel {
+            background: rgba(20, 40, 20, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        /* Estilos do Modal do Cardápio */
+        #menu-modal {
+            background-image: url('image_ac28a3.jpg'); /* Fundo aquarela claro */
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .menu-item {
+            border-bottom: 1px dashed rgba(45, 90, 39, 0.3);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body class="relative">
+
+    <!-- ÁUDIOS (URLs públicas para demonstração, substitua pelos seus se preferir) -->
+    <audio id="audio-nature" src="https://cdn.pixabay.com/audio/2022/01/18/audio_d0a13f69d2.mp3" preload="auto"></audio>
+    <audio id="audio-magic" src="https://cdn.pixabay.com/audio/2022/11/22/audio_10cf6b341f.mp3" loop preload="auto"></audio>
+
+    <!-- TELA 1: A ENTRADA -->
+    <div id="screen-entrance" class="fixed inset-0 z-50 flex items-center justify-center bg-entrance transition-opacity duration-1000">
+        <div class="absolute inset-0 bg-black/30"></div>
+        <div class="relative z-10 text-center flex flex-col items-center px-4">
+            <h1 class="text-5xl md:text-7xl font-bold text-amber-100 drop-shadow-lg mb-8 tracking-widest text-center">Bosque Encantado</h1>
+            <button id="btn-enter" class="px-8 py-4 bg-green-900/80 hover:bg-green-700 text-amber-100 rounded-full text-xl md:text-2xl font-cinzel font-semibold backdrop-blur-md border-2 border-green-500 transition-transform transform hover:scale-105 hover:shadow-[0_0_20px_rgba(76,175,80,0.8)]">
+                <i class="fa-solid fa-key mr-2"></i> Adentrar ao Bosque
+            </button>
+        </div>
+    </div>
+
+    <!-- CAMADA DE ANIMAÇÕES -->
+    <div id="anim-layer" class="fixed inset-0 pointer-events-none z-40 hidden overflow-hidden">
+        <!-- Elementos injetados via JS -->
+    </div>
+
+    <!-- TELA 2: O FILTRO (RSVP) -->
+    <div id="screen-gate" class="fixed inset-0 z-30 flex items-center justify-center bg-forest-deep hidden opacity-0">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+        <div class="relative z-10 glass-panel max-w-lg w-11/12 p-8 md:p-12 rounded-3xl text-center">
+            <h2 class="text-3xl md:text-4xl text-amber-200 font-cinzel mb-8 drop-shadow-md">Você aceita o chamado para o nosso Bosque?</h2>
+            <div class="flex flex-col gap-5">
+                <button id="btn-yes" class="px-6 py-4 bg-gradient-to-r from-green-800 to-green-600 hover:from-green-700 hover:to-green-500 text-white rounded-xl text-lg font-semibold shadow-lg transition-transform transform hover:scale-105 border border-green-400/50">
+                    <i class="fa-solid fa-leaf mr-2"></i> Sim, com certeza!
+                </button>
+                <button id="btn-no" class="px-6 py-4 bg-gradient-to-r from-red-900 to-red-800 hover:from-red-800 hover:to-red-700 text-white rounded-xl text-lg font-semibold shadow-lg transition-transform transform hover:scale-105 border border-red-500/50">
+                    <i class="fa-solid fa-person-walking-arrow-right mr-2"></i> Infelizmente, não poderei
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TELA 3: FORMULÁRIO DE DESISTÊNCIA (Não vai) -->
+    <div id="screen-regret" class="fixed inset-0 z-20 flex items-center justify-center bg-forest-deep hidden opacity-0 overflow-y-auto py-10">
+        <div class="absolute inset-0 bg-black/70 backdrop-blur-md"></div>
+        <div class="relative z-10 glass-panel max-w-md w-11/12 p-8 rounded-3xl text-center">
+            <i class="fa-solid fa-dove text-4xl text-amber-200 mb-4"></i>
+            <h2 class="text-3xl text-amber-100 font-cinzel mb-4">Sentiremos sua falta!</h2>
+            <p class="text-gray-300 mb-6 text-sm">O bosque não será o mesmo sem você. Deixe um recadinho carinhoso para guardarmos de lembrança.</p>
+            
+            <form id="form-regret" class="flex flex-col gap-4 text-left">
+                <input type="hidden" name="status" value="Não vai">
+                <div>
+                    <label class="block text-amber-100 text-sm font-semibold mb-1"><i class="fa-solid fa-user mr-1"></i> Nome Completo</label>
+                    <input type="text" name="nome" required class="w-full px-4 py-3 rounded-xl bg-black/40 border border-green-800 text-white focus:outline-none focus:border-amber-400 placeholder-gray-500" placeholder="Digite seu nome completo">
+                </div>
+                <div>
+                    <label class="block text-amber-100 text-sm font-semibold mb-1"><i class="fa-solid fa-phone mr-1"></i> Telefone / WhatsApp</label>
+                    <input type="tel" name="telefone" required class="w-full px-4 py-3 rounded-xl bg-black/40 border border-green-800 text-white focus:outline-none focus:border-amber-400 placeholder-gray-500" placeholder="(11) 99999-9999">
+                </div>
+                <div>
+                    <label class="block text-amber-100 text-sm font-semibold mb-1"><i class="fa-solid fa-envelope-open-text mr-1"></i> Mensagem Carinhosa</label>
+                    <textarea name="mensagem" required rows="3" class="w-full px-4 py-3 rounded-xl bg-black/40 border border-green-800 text-white focus:outline-none focus:border-amber-400 placeholder-gray-500" placeholder="Escreva seu recadinho..."></textarea>
+                </div>
+                <button type="submit" class="mt-4 px-6 py-4 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-lg font-bold shadow-lg transition-transform transform hover:scale-105">
+                    <i class="fa-solid fa-paper-plane mr-2"></i> Enviar Mensagem
+                </button>
+                <button type="button" onclick="location.reload()" class="mt-2 text-sm text-gray-400 hover:text-white underline text-center">
+                    Voltar ao início
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- TELA 4: CONVITE PRINCIPAL (Para quem vai) -->
+    <div id="screen-main" class="absolute inset-0 z-10 bg-forest-deep hidden opacity-0 overflow-y-auto pb-20">
+        <div class="min-h-screen flex flex-col items-center pt-16 px-4">
+            
+            <!-- Cabeçalho -->
+            <div class="glass-panel p-8 rounded-3xl max-w-3xl w-full text-center mb-10 mt-10">
+                <h2 class="text-sm md:text-lg text-amber-400 uppercase tracking-[0.3em] mb-2"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i>Você é nosso convidado de honra</h2>
+                <h1 class="text-4xl md:text-6xl text-white font-cinzel mb-6 drop-shadow-lg">Celebração no Bosque</h1>
+                
+                <div class="flex flex-col md:flex-row justify-center items-center gap-8 text-xl md:text-2xl mt-8">
+                    <div class="flex flex-col items-center">
+                        <i class="fa-regular fa-calendar-days text-3xl text-amber-200 mb-2"></i>
+                        <span class="font-bold text-green-100">09/11/2027</span>
+                    </div>
+                    <div class="hidden md:block w-px h-16 bg-green-700/50"></div>
+                    <div class="flex flex-col items-center">
+                        <i class="fa-regular fa-clock text-3xl text-amber-200 mb-2"></i>
+                        <span class="font-bold text-green-100">13:30 às 17:00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contagem Regressiva (Tema Musgo) -->
+            <div class="text-center mb-12 w-full max-w-4xl">
+                <h3 class="text-2xl font-cinzel text-amber-200 mb-6 drop-shadow-md"><i class="fa-solid fa-hourglass-half mr-2"></i>O tempo para a magia começar...</h3>
+                <div class="flex justify-center gap-4 md:gap-8" id="countdown-container">
+                    <div class="flex flex-col items-center">
+                        <span id="cd-days" class="text-5xl md:text-8xl moss-text">00</span>
+                        <span class="text-sm md:text-lg text-green-300 mt-2 font-cinzel tracking-wider">Dias</span>
+                    </div>
+                    <span class="text-4xl md:text-6xl text-green-700 mt-2">:</span>
+                    <div class="flex flex-col items-center">
+                        <span id="cd-hours" class="text-5xl md:text-8xl moss-text">00</span>
+                        <span class="text-sm md:text-lg text-green-300 mt-2 font-cinzel tracking-wider">Horas</span>
+                    </div>
+                    <span class="text-4xl md:text-6xl text-green-700 mt-2">:</span>
+                    <div class="flex flex-col items-center">
+                        <span id="cd-mins" class="text-5xl md:text-8xl moss-text">00</span>
+                        <span class="text-sm md:text-lg text-green-300 mt-2 font-cinzel tracking-wider">Min</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botão Cardápio -->
+            <div class="mb-12">
+                <button id="btn-open-menu" class="px-8 py-4 bg-gradient-to-r from-amber-700 to-amber-500 hover:from-amber-600 hover:to-amber-400 text-white rounded-full text-xl font-cinzel font-bold shadow-[0_0_20px_rgba(245,158,11,0.4)] transition-transform transform hover:scale-110">
+                    <i class="fa-solid fa-utensils mr-2"></i> Descobrir o Banquete
+                </button>
+            </div>
+
+            <!-- Endereço e Mapas -->
+            <div class="glass-panel p-8 rounded-3xl max-w-2xl w-full text-center mb-12">
+                <i class="fa-solid fa-map-location-dot text-4xl text-amber-200 mb-4"></i>
+                <h3 class="text-2xl font-cinzel text-white mb-2">Localização Secreta</h3>
+                <p class="text-xl text-gray-300 mb-8 font-semibold">Avenida do Anastácio, 137</p>
+                
+                <p class="text-sm text-amber-100/70 mb-4 uppercase tracking-wider">Traçar rota mágica com:</p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="https://waze.com/ul?q=Avenida+do+Anastácio,+137&navigate=yes" target="_blank" class="flex items-center px-5 py-3 bg-[#33ccff]/10 border border-[#33ccff]/50 hover:bg-[#33ccff]/30 text-white rounded-xl transition">
+                        <i class="fa-brands fa-waze text-2xl mr-2 text-[#33ccff]"></i> Waze
+                    </a>
+                    <a href="https://www.google.com/maps/search/?api=1&query=Avenida+do+Anastácio,+137" target="_blank" class="flex items-center px-5 py-3 bg-[#34a853]/10 border border-[#34a853]/50 hover:bg-[#34a853]/30 text-white rounded-xl transition">
+                        <i class="fa-brands fa-google text-2xl mr-2 text-[#34a853]"></i> Google Maps
+                    </a>
+                    <a href="http://maps.apple.com/?q=Avenida+do+Anastácio,+137" target="_blank" class="flex items-center px-5 py-3 bg-gray-500/10 border border-gray-400/50 hover:bg-gray-500/30 text-white rounded-xl transition">
+                        <i class="fa-brands fa-apple text-2xl mr-2"></i> Apple Maps
+                    </a>
+                </div>
+            </div>
+
+            <!-- Formulário de Confirmação de Dados -->
+            <div class="glass-panel p-8 md:p-10 rounded-3xl max-w-2xl w-full mb-8">
+                <h3 class="text-2xl font-cinzel text-amber-200 mb-6 text-center border-b border-green-800 pb-4"><i class="fa-solid fa-clipboard-check mr-2"></i>Registro de Passagem</h3>
+                
+                <form id="form-yes" class="flex flex-col gap-5 text-left">
+                    <input type="hidden" name="status" value="Confirmado">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-amber-100 text-sm font-semibold mb-1"><i class="fa-solid fa-signature mr-1"></i> Nome Completo</label>
+                            <input type="text" name="nome" required class="w-full px-4 py-3 rounded-xl bg-black/40 border border-green-800 text-white focus:outline-none focus:border-amber-400">
+                        </div>
+                        <div>
+                            <label class="block text-amber-100 text-sm font-semibold mb-1"><i class="fa-brands fa-whatsapp mr-1"></i> WhatsApp</label>
+                            <input type="tel" name="telefone" required class="w-full px-4 py-3 rounded-xl bg-black/40 border border-green-800 text-white focus:outline-none focus:border-amber-400">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-amber-100 text-sm font-semibold mb-1"><i class="fa-solid fa-envelope mr-1"></i> E-mail (Para enviar lembrete)</label>
+                        <input type="email" name="email" required class="w-full px-4 py-3 rounded-xl bg-black/40 border border-green-800 text-white focus:outline-none focus:border-amber-400">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-amber-100 text-sm font-semibold mb-1"><i class="fa-solid fa-user-tie mr-1"></i> Qtd. Adultos</label>
+                            <input type="number" name="adultos" min="1" required class="w-full px-4 py-3 rounded-xl bg-black/40 border border-green-800 text-white focus:outline-none focus:border-amber-400">
+                        </div>
+                        <div>
+                            <label class="block text-amber-100 text-sm font-semibold mb-1"><i class="fa-solid fa-child mr-1"></i> Qtd. Crianças</label>
+                            <input type="number" name="criancas" min="0" required class="w-full px-4 py-3 rounded-xl bg-black/40 border border-green-800 text-white focus:outline-none focus:border-amber-400">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="mt-6 px-6 py-4 bg-green-700 hover:bg-green-600 text-white rounded-xl text-xl font-bold shadow-[0_0_15px_rgba(34,197,94,0.3)] transition-transform transform hover:scale-105">
+                        <i class="fa-solid fa-check-circle mr-2"></i> Confirmar Presença Definitiva
+                    </button>
+                </form>
+            </div>
+
+            <!-- Botão Desistir -->
+            <div class="mt-4 mb-20 text-center">
+                <p class="text-gray-400 mb-2 text-sm">Imprevistos acontecem no bosque...</p>
+                <button id="btn-cancel-mind" class="px-6 py-2 bg-transparent border border-red-800/50 hover:bg-red-900/30 text-red-300 rounded-full text-sm transition">
+                    <i class="fa-solid fa-rotate-left mr-1"></i> Preciso cancelar minha ida
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- MODAL DO CARDÁPIO -->
+    <div id="modal-menu-container" class="fixed inset-0 z-[60] flex items-center justify-center hidden opacity-0 transition-opacity duration-500 p-4">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-md" id="bg-close-menu"></div>
+        <div id="menu-modal" class="relative z-10 w-full max-w-md max-h-[85vh] overflow-y-auto rounded-2xl shadow-2xl p-6 text-green-950">
+            <!-- Botão Fechar -->
+            <button id="btn-close-menu" class="absolute top-4 right-4 text-green-900 hover:text-red-700 text-2xl transition">
+                <i class="fa-solid fa-circle-xmark"></i>
+            </button>
+            
+            <div class="text-center mb-6">
+                <h2 class="text-3xl font-cinzel font-bold text-green-900 drop-shadow-sm"><i class="fa-solid fa-cake-candles mr-2 text-amber-600"></i>O Banquete</h2>
+                <p class="text-sm font-semibold text-green-800 mt-1"><i class="fa-solid fa-balloon mr-1"></i> Crianças até 7 anos são cortesia!</p>
+            </div>
+
+            <div class="space-y-6 text-green-950 font-medium">
+                <!-- Entradas -->
+                <div>
+                    <h3 class="text-xl font-cinzel font-bold border-b border-green-800/30 pb-1 mb-2 text-green-800"><i class="fa-solid fa-fire-burner mr-2"></i>Entradas & Salgados</h3>
+                    <ul class="list-disc list-inside text-sm space-y-1 ml-2">
+                        <li>Batata Frita & Mini Pastel</li>
+                        <li>Mini Dog</li>
+                        <li>Coxinha & Bolinho de Queijo</li>
+                        <li>Croquete de Calabresa</li>
+                        <li>Bolinho de Carne & Trouxinha (Presunto/Queijo)</li>
+                    </ul>
+                </div>
+
+                <!-- Pratos Principais -->
+                <div>
+                    <h3 class="text-xl font-cinzel font-bold border-b border-green-800/30 pb-1 mb-2 text-green-800"><i class="fa-solid fa-bowl-food mr-2"></i>Pratos Principais</h3>
+                    <p class="text-sm text-green-800 mb-1 italic">Todas as massas acompanham molho ao sugo e branco com saladas.</p>
+                    <ul class="list-disc list-inside text-sm space-y-1 ml-2">
+                        <li><strong>Porção Especial:</strong> Polenta Mole à Bolonhesa</li>
+                        <li>Ravioli</li>
+                        <li>Penne</li>
+                        <li>Capelete</li>
+                        <li>Nhoque</li>
+                    </ul>
+                </div>
+
+                <!-- Doces e Bolo -->
+                <div>
+                    <h3 class="text-xl font-cinzel font-bold border-b border-green-800/30 pb-1 mb-2 text-green-800"><i class="fa-solid fa-candy-cane mr-2"></i>Sobremesas & Parabéns</h3>
+                    <p class="text-sm font-semibold mb-1">Doces:</p>
+                    <ul class="list-disc list-inside text-sm space-y-1 ml-2 mb-2">
+                        <li>Brigadeiro & Beijinho</li>
+                    </ul>
+                    <p class="text-sm font-semibold mb-1">Opções de Bolo:</p>
+                    <ul class="list-disc list-inside text-sm space-y-1 ml-2">
+                        <li>Mousse de Chocolate, Prestígio, Brigadeiro</li>
+                        <li>Morango c/ Brigadeiro, Mousse de Maracujá</li>
+                        <li>Morango c/ Moça, Abacaxi c/ Moça</li>
+                        <li>Ninho Cremoso, Ninho c/ Morango</li>
+                        <li>Sensação, Doce de Leite c/ Ameixa</li>
+                    </ul>
+                </div>
+
+                <!-- Bebidas -->
+                <div>
+                    <h3 class="text-xl font-cinzel font-bold border-b border-green-800/30 pb-1 mb-2 text-green-800"><i class="fa-solid fa-mug-hot mr-2"></i>Bebidas & Saída</h3>
+                    <ul class="list-disc list-inside text-sm space-y-1 ml-2">
+                        <li>Coca-Cola, Guaraná, Suco, Água Mineral</li>
+                        <li class="mt-2 font-semibold text-amber-700">Mesa de café colonial com petit four (Saída)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT DE INTERAÇÃO -->
+    <script>
+        // CONFIGURAÇÃO DO APPS SCRIPT (Cole sua URL do .gs aqui depois)
+        const SCRIPT_URL = "SUA_URL_DO_WEBAPP_AQUI"; 
+
+        // Elementos de Áudio
+        const audioNature = document.getElementById('audio-nature');
+        const audioMagic = document.getElementById('audio-magic');
+
+        // Elementos de Tela
+        const screenEntrance = document.getElementById('screen-entrance');
+        const screenGate = document.getElementById('screen-gate');
+        const screenRegret = document.getElementById('screen-regret');
+        const screenMain = document.getElementById('screen-main');
+        const animLayer = document.getElementById('anim-layer');
+        
+        // Elementos do Modal
+        const modalMenu = document.getElementById('modal-menu-container');
+
+        // Função utilitária para transições suaves
+        function switchScreen(hideEl, showEl) {
+            hideEl.classList.remove('fade-in');
+            hideEl.classList.add('fade-out');
+            
+            setTimeout(() => {
+                hideEl.classList.add('hidden');
+                hideEl.classList.remove('fade-out');
+                
+                showEl.classList.remove('hidden');
+                // Pequeno delay para garantir que o display:block aplicou antes de animar a opacidade
+                setTimeout(() => {
+                    showEl.classList.add('fade-in');
+                }, 50);
+            }, 1000);
+        }
+
+        // 1. Botão Adentrar ao Bosque
+        document.getElementById('btn-enter').addEventListener('click', () => {
+            // Tocar sons (Requer interação do usuário para permissão do navegador)
+            audioNature.volume = 0.5;
+            audioMagic.volume = 0.3;
+            audioNature.play().catch(e => console.log('Audio nature block'));
+            
+            // Injetar animações CSS (Animais e Folhas)
+            animLayer.classList.remove('hidden');
+            animLayer.innerHTML = `
+                <i class="fa-solid fa-hippo animal-run" style="bottom: 10%; color: #8B4513;"></i>
+                <i class="fa-solid fa-cat animal-run" style="bottom: 20%; animation-delay: 1s; color: #d35400;"></i>
+                <i class="fa-solid fa-dove bird-fly" style="top: 20%;"></i>
+                <i class="fa-brands fa-pagelines butterfly" style="top: 40%; animation-delay: 2s;"></i>
+                <i class="fa-solid fa-leaf falling-leaf" style="left: 20%; animation-duration: 6s;"></i>
+                <i class="fa-solid fa-leaf falling-leaf" style="left: 50%; animation-duration: 9s; animation-delay: 1s;"></i>
+                <i class="fa-solid fa-leaf falling-leaf" style="left: 80%; animation-duration: 7s; animation-delay: 2s;"></i>
+            `;
+
+            // Trocar tela
+            switchScreen(screenEntrance, screenGate);
+
+            // Iniciar música principal após os sons da natureza acabarem (ou em paralelo)
+            setTimeout(() => {
+                audioMagic.play().catch(e => console.log('Audio magic block'));
+            }, 3000);
+        });
+
+        // 2. Fluxo do RSVP (Portão)
+        document.getElementById('btn-no').addEventListener('click', () => {
+            switchScreen(screenGate, screenRegret);
+        });
+
+        document.getElementById('btn-yes').addEventListener('click', () => {
+            switchScreen(screenGate, screenMain);
+            startCountdown(); // Iniciar relógio apenas quando entrar
+        });
+
+        // 3. Botão Desistir (Voltando atrás)
+        document.getElementById('btn-cancel-mind').addEventListener('click', () => {
+            switchScreen(screenMain, screenRegret);
+        });
+
+        // 4. Lógica do Modal de Cardápio
+        document.getElementById('btn-open-menu').addEventListener('click', () => {
+            modalMenu.classList.remove('hidden');
+            setTimeout(() => modalMenu.classList.remove('opacity-0'), 10);
+        });
+
+        function closeMenu() {
+            modalMenu.classList.add('opacity-0');
+            setTimeout(() => modalMenu.classList.add('hidden'), 500);
+        }
+        
+        document.getElementById('btn-close-menu').addEventListener('click', closeMenu);
+        document.getElementById('bg-close-menu').addEventListener('click', closeMenu);
+
+        // 5. Lógica da Contagem Regressiva
+        function startCountdown() {
+            const targetDate = new Date("2027-11-09T13:30:00").getTime();
+            
+            const timer = setInterval(() => {
+                const now = new Date().getTime();
+                const distance = targetDate - now;
+                
+                if (distance < 0) {
+                    clearInterval(timer);
+                    document.getElementById("countdown-container").innerHTML = "<h3 class='text-4xl moss-text'>A Magia Começou!</h3>";
+                    return;
+                }
+                
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                
+                document.getElementById("cd-days").innerText = days.toString().padStart(2, '0');
+                document.getElementById("cd-hours").innerText = hours.toString().padStart(2, '0');
+                document.getElementById("cd-mins").innerText = minutes.toString().padStart(2, '0');
+            }, 1000);
+        }
+
+        // 6. Lógica de Envio dos Formulários
+        function handleFormSubmit(formId) {
+            const form = document.getElementById(formId);
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const btn = form.querySelector('button[type="submit"]');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Enviando...';
+                btn.disabled = true;
+
+                const formData = new FormData(form);
+                const dataObj = Object.fromEntries(formData.entries());
+
+                // Fetch real para o Google Apps Script
+                fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(dataObj),
+                    headers: { 'Content-Type': 'application/json' },
+                    mode: 'no-cors' // Necessário para Google Scripts sem domínio próprio
+                }).then(() => {
+                    form.innerHTML = `
+                        <div class="text-center py-8">
+                            <i class="fa-solid fa-heart text-5xl text-amber-400 mb-4 fade-in"></i>
+                            <h3 class="text-2xl font-cinzel text-white mb-2">Mensagem Recebida!</h3>
+                            <p class="text-gray-300">Agradecemos de todo coração.</p>
+                        </div>
+                    `;
+                }).catch(err => {
+                    alert('Houve um pequeno erro mágico. Tente novamente!');
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                });
+            });
+        }
+
+        handleFormSubmit('form-regret');
+        handleFormSubmit('form-yes');
+
+    </script>
+</body>
+</html>
