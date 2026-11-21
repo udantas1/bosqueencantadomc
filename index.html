@@ -10,11 +10,21 @@
   <!-- Icone minimalista do bosque na aba do navegador (SVG inline, sem dependencias externas) -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23EAF0E6' stroke='%23BD9B5E' stroke-width='2.5'/%3E%3Cpath d='M32 50V22' stroke='%234A6346' stroke-width='2.6' stroke-linecap='round'/%3E%3Cpath d='M32 34c-9 0-15-6-15-15 9 0 15 6 15 15z' fill='%236E8A68'/%3E%3Cpath d='M32 29c9 0 15-6 15-15-9 0-15 6-15 15z' fill='%23C78C87'/%3E%3C/svg%3E" />
 
-  <!-- Previa ao compartilhar no WhatsApp (caso suba bosque.jpg na pasta do projeto) -->
+  <!-- Previa ao compartilhar no WhatsApp (foto oficial da Maria Celina) -->
   <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://celebremariacelina.vercel.app/" />
   <meta property="og:title" content="Maria Celina em um Bosque Encantado — 1 Ano" />
   <meta property="og:description" content="09 de Janeiro, das 13h às 17h. Veja o endereço, rotas de transporte e cardápio da festa." />
-  <meta property="og:image" content="foto%20principal.jpg" />
+  <meta property="og:image" content="https://celebremariacelina.vercel.app/fotos/principal.jpg?v=2" />
+  <meta property="og:image:secure_url" content="https://celebremariacelina.vercel.app/fotos/principal.jpg?v=2" />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta property="og:image:width" content="750" />
+  <meta property="og:image:height" content="1000" />
+  <meta property="og:image:alt" content="Maria Celina — Aniversário de 1 Ano no Bosque Encantado" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Maria Celina em um Bosque Encantado — 1 Ano" />
+  <meta name="twitter:description" content="09 de Janeiro, das 13h às 17h. Veja o endereço, rotas de transporte e cardápio da festa." />
+  <meta name="twitter:image" content="https://celebremariacelina.vercel.app/fotos/principal.jpg?v=2" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -1183,6 +1193,52 @@
       padding-bottom: 4px;
     }
 
+    .menu-cat-tag {
+      margin-left: auto;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      color: var(--rose-deep);
+      background: var(--rose-tint);
+      border: 1px solid rgba(199, 140, 135, 0.30);
+      border-radius: 999px;
+      padding: 3px 10px;
+      white-space: nowrap;
+    }
+
+    .menu-snack-chips {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .menu-snack-chips li {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(255, 253, 248, 0.96), rgba(247, 240, 224, 0.72));
+      border: 1px solid var(--gold-border);
+      box-shadow: 0 4px 12px rgba(56, 68, 52, 0.05);
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--sage-deep);
+      line-height: 1.3;
+    }
+
+    .menu-snack-chips li::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--rose-accent);
+      flex-shrink: 0;
+    }
+
     .menu-cat-head {
       display: flex;
       align-items: center;
@@ -1472,7 +1528,7 @@
           <img
             id="celinaMainPhoto"
             class="arch-photo"
-            src="foto%20principal.jpg"
+            src="fotos/principal.jpg"
             alt="Maria Celina — Aniversário de 1 Ano no Bosque Encantado"
           />
         </div>
@@ -2007,13 +2063,27 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M12 3l1.8 5.4L19 10l-5.2 1.6L12 17l-1.8-5.4L5 10l5.2-1.6L12 3z" />
           </svg>
-          <span>Entradas &amp; Lanchinho</span>
+          <span>Entradas</span>
         </h3>
         <ul class="menu-items">
           <li>Porções de Batata Frita</li>
           <li>Porções de Mini Pastel</li>
           <li>Mini Dog</li>
-          <li>Hora do lanchinho com as crianças</li>
+        </ul>
+      </div>
+
+      <div class="menu-category">
+        <h3 class="menu-cat-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M18 9a4 4 0 0 0-7.5-1.9A3.5 3.5 0 0 0 6 10.5a3 3 0 0 0 1 5.8h10a3 3 0 0 0 1-5.8A3.9 3.9 0 0 0 18 9z" />
+            <path d="M12 16.3V21" />
+          </svg>
+          <span>Hora do Lanchinho</span>
+          <span class="menu-cat-tag">Com as crianças</span>
+        </h3>
+        <ul class="menu-snack-chips">
+          <li>Pipoca</li>
+          <li>Algodão Doce</li>
         </ul>
       </div>
 
@@ -2129,28 +2199,44 @@
 
     /* =====================================================================
        FALLBACK INTELIGENTE PARA A FOTO PRINCIPAL DA MARIA CELINA
-       Aceita "foto principal.jpg" (ou .jpeg / .png / .webp / com hifen).
-       Se o arquivo ainda nao estiver na pasta, exibe o quadro do bosque.
+       Tenta primeiro fotos/principal.jpg e depois variacoes na raiz e na
+       pasta fotos/. Se nenhuma existir, exibe a ilustracao do bosque.
        ===================================================================== */
     const celinaPhoto = document.getElementById('celinaMainPhoto');
     const photoCandidates = [
-      'foto%20principal.jpeg',
-      'foto%20principal.png',
-      'foto%20principal.webp',
+      'principal.jpg',
+      'fotos/foto-principal.jpg',
+      'fotos/foto%20principal.jpg',
       'foto-principal.jpg',
+      'foto%20principal.jpg',
+      'fotos/principal.jpeg',
+      'fotos/principal.png',
+      'fotos/principal.webp',
+      'principal.jpeg',
+      'principal.png',
+      'principal.webp',
       'foto-principal.jpeg',
       'foto-principal.png',
-      'principal.jpg'
+      'foto%20principal.jpeg',
+      'foto%20principal.png',
+      'foto%20principal.webp'
     ];
     let photoTryIdx = 0;
 
-    celinaPhoto.addEventListener('error', () => {
+    function tryNextCelinaPhoto() {
       if (photoTryIdx < photoCandidates.length) {
         celinaPhoto.src = photoCandidates[photoTryIdx++];
       } else {
         celinaPhoto.style.display = 'none';
       }
-    });
+    }
+
+    celinaPhoto.addEventListener('error', tryNextCelinaPhoto);
+
+    // Garante o fallback caso o primeiro carregamento ja tenha falhado antes do script rodar
+    if (celinaPhoto.complete && celinaPhoto.naturalWidth === 0) {
+      tryNextCelinaPhoto();
+    }
 
     /* =====================================================================
        CONTADOR REGRESSIVO (DIAS, HORAS, MINUTOS E SEGUNDOS)
