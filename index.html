@@ -17,68 +17,74 @@
       window.__MC_INVITE_CODE__ = code;
 
       window.__MC_QUERY_GAS__ = function (queryParams, timeoutMs) {
-        var ms = timeoutMs || 12000;
-        var baseUrl = window.__MC_APPS_SCRIPT_URL__;
-        var qs = [];
-        for (var k in queryParams) {
-          if (Object.prototype.hasOwnProperty.call(queryParams, k) && queryParams[k] !== undefined && queryParams[k] !== null) {
-            qs.push(encodeURIComponent(k) + '=' + encodeURIComponent(String(queryParams[k])));
-          }
+  var ms = timeoutMs || 12000;
+  var baseUrl = window.__MC_APPS_SCRIPT_URL__;
+  var qs = [];
+  for (var k in queryParams) {
+    if (Object.prototype.hasOwnProperty.call(queryParams, k) && queryParams[k] !== undefined && queryParams[k] !== null) {
+      qs.push(encodeURIComponent(k) + '=' + encodeURIComponent(String(queryParams[k])));
+    }
+  }
+  qs.push('t=' + Date.now());
+  var sep = baseUrl.indexOf('?') === -1 ? '?' : '&';
+  
+  // Cria uma Promise que será resolvida pelo JSONP
+  return new Promise(function (resolve, reject) {
+    // Cria um nome de função único para o callback
+    var cbName = '__mcJsonpCb_' + Date.now() + '_' + Math.floor(Math.random() * 1000000);
+    var settled = false;
+    var script = document.createElement('script');
+
+    function cleanup() {
+      try { delete window[cbName]; } catch (e) { window[cbName] = undefined; }
+      if (script && script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
+    }
+
+    // Timeout de segurança
+    var timer = setTimeout(function () {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      reject(new Error('JSONP timeout'));
+    }, ms);
+
+    // Esta função será chamada pelo servidor (Google Apps Script)
+    window[cbName] = function (payload) {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      cleanup();
+      resolve(payload);
+    };
+
+    script.async = true;
+    // O URL inclui o parâmetro 'callback' com o nome da função
+    script.src = baseUrl + sep + qs.join('&') + '&callback=' + encodeURIComponent(cbName);
+    
+    script.onload = function () {
+      setTimeout(function () {
+        if (!settled) {
+          settled = true;
+          clearTimeout(timer);
+          cleanup();
+          reject(new Error('JSONP callback not invoked (possível erro no servidor)'));
         }
-        qs.push('t=' + Date.now());
-        var sep = baseUrl.indexOf('?') === -1 ? '?' : '&';
-        var fullUrlBase = baseUrl + sep + qs.join('&');
+      }, 50);
+    };
+    script.onerror = function () {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      cleanup();
+      reject(new Error('Erro de conexão ao carregar o script do servidor'));
+    };
 
-        var jsonpPromise = new Promise(function (resolve, reject) {
-          var cbName = '__mcJsonpCb_' + Date.now() + '_' + Math.floor(Math.random() * 1000000);
-          var settled = false;
-          var script = document.createElement('script');
-
-          function cleanup() {
-            try { delete window[cbName]; } catch (e) { window[cbName] = undefined; }
-            if (script && script.parentNode) {
-              script.parentNode.removeChild(script);
-            }
-          }
-
-          var timer = setTimeout(function () {
-            if (settled) return;
-            settled = true;
-            cleanup();
-            reject(new Error('JSONP timeout'));
-          }, ms);
-
-          window[cbName] = function (payload) {
-            if (settled) return;
-            settled = true;
-            clearTimeout(timer);
-            cleanup();
-            resolve(payload);
-          };
-
-          script.async = true;
-          script.src = fullUrlBase + '&callback=' + encodeURIComponent(cbName);
-          script.onload = function () {
-            // Se o script carregou mas nao chamou window[cbName], o endpoint provavelmente retornou JSON puro ou bloqueou JSONP
-            setTimeout(function () {
-              if (!settled) {
-                settled = true;
-                clearTimeout(timer);
-                cleanup();
-                reject(new Error('JSONP callback not invoked'));
-              }
-            }, 50);
-          };
-          script.onerror = function () {
-            if (settled) return;
-            settled = true;
-            clearTimeout(timer);
-            cleanup();
-            reject(new Error('JSONP script load error'));
-          };
-
-          (document.head || document.documentElement).appendChild(script);
-        });
+    // Adiciona o script à página, iniciando a requisição ignorando o CORS
+    (document.head || document.documentElement).appendChild(script);
+  });
+};
 
         var fetchPromise = new Promise(function (resolve, reject) {
           if (typeof fetch !== 'function') {
