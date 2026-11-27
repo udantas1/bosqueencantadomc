@@ -9,32 +9,121 @@
   <link rel="preconnect" href="https://script.google.com" crossorigin />
   <link rel="preconnect" href="https://script.googleusercontent.com" crossorigin />
   <script>
-    /* Dispara a verificacao do convite imediatamente, em paralelo ao download do restante da pagina */
+    /* Dispara a verificacao do convite imediatamente (JSONP + fetch), em paralelo ao download da pagina */
     (function () {
-      window.__MC_APPS_SCRIPT_URL__ = 'https://script.google.com/macros/s/AKfycbwzH2je85sEjgMU4rJhbXr7iTWsM0OLaDl99UynQn6WsLyMG2hye3TLd42W8u2i-4OX/exec';
+      window.__MC_APPS_SCRIPT_URL__ = 'https://script.google.com/macros/s/AKfycbwmVXVslVeb__skEcTT6l72cqVNWt1dlaU-90XnUaIzZ4OClSXLsz9_og3-BOizuRIy/exec';
       var params = new URLSearchParams(window.location.search);
       var code = (params.get('c') || '').trim();
       window.__MC_INVITE_CODE__ = code;
+
+      window.__MC_QUERY_GAS__ = function (queryParams, timeoutMs) {
+        var ms = timeoutMs || 12000;
+        var baseUrl = window.__MC_APPS_SCRIPT_URL__;
+        var qs = [];
+        for (var k in queryParams) {
+          if (Object.prototype.hasOwnProperty.call(queryParams, k) && queryParams[k] !== undefined && queryParams[k] !== null) {
+            qs.push(encodeURIComponent(k) + '=' + encodeURIComponent(String(queryParams[k])));
+          }
+        }
+        qs.push('t=' + Date.now());
+        var sep = baseUrl.indexOf('?') === -1 ? '?' : '&';
+        var fullUrlBase = baseUrl + sep + qs.join('&');
+
+        var jsonpPromise = new Promise(function (resolve, reject) {
+          var cbName = '__mcJsonpCb_' + Date.now() + '_' + Math.floor(Math.random() * 1000000);
+          var settled = false;
+          var script = document.createElement('script');
+
+          function cleanup() {
+            try { delete window[cbName]; } catch (e) { window[cbName] = undefined; }
+            if (script && script.parentNode) {
+              script.parentNode.removeChild(script);
+            }
+          }
+
+          var timer = setTimeout(function () {
+            if (settled) return;
+            settled = true;
+            cleanup();
+            reject(new Error('JSONP timeout'));
+          }, ms);
+
+          window[cbName] = function (payload) {
+            if (settled) return;
+            settled = true;
+            clearTimeout(timer);
+            cleanup();
+            resolve(payload);
+          };
+
+          script.async = true;
+          script.src = fullUrlBase + '&callback=' + encodeURIComponent(cbName);
+          script.onload = function () {
+            // Se o script carregou mas nao chamou window[cbName], o endpoint provavelmente retornou JSON puro ou bloqueou JSONP
+            setTimeout(function () {
+              if (!settled) {
+                settled = true;
+                clearTimeout(timer);
+                cleanup();
+                reject(new Error('JSONP callback not invoked'));
+              }
+            }, 50);
+          };
+          script.onerror = function () {
+            if (settled) return;
+            settled = true;
+            clearTimeout(timer);
+            cleanup();
+            reject(new Error('JSONP script load error'));
+          };
+
+          (document.head || document.documentElement).appendChild(script);
+        });
+
+        var fetchPromise = new Promise(function (resolve, reject) {
+          if (typeof fetch !== 'function') {
+            reject(new Error('No fetch'));
+            return;
+          }
+          var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+          var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, ms) : null;
+          fetch(fullUrlBase, {
+            method: 'GET',
+            redirect: 'follow',
+            cache: 'no-store',
+            signal: ctrl ? ctrl.signal : undefined
+          }).then(function (resp) {
+            if (timer) clearTimeout(timer);
+            if (!resp.ok) throw new Error('HTTP ' + resp.status);
+            return resp.json();
+          }).then(resolve).catch(function (err) {
+            if (timer) clearTimeout(timer);
+            reject(err);
+          });
+        });
+
+        // Retorna o primeiro que responder com sucesso (JSONP costuma contornar bloqueios de CORS/extensoes)
+        return new Promise(function (resolve, reject) {
+          var errors = [];
+          var failCount = 0;
+          function onFail(err) {
+            errors.push(err);
+            failCount++;
+            if (failCount === 2) {
+              reject(errors[0] || new Error('Falha na consulta'));
+            }
+          }
+          jsonpPromise.then(resolve, onFail);
+          fetchPromise.then(resolve, onFail);
+        });
+      };
+
       if (!code || !window.__MC_APPS_SCRIPT_URL__.startsWith('https://')) return;
       try {
         if (localStorage.getItem('mc_bosque_closed_' + code.toLowerCase()) === '1') return;
       } catch (e) {}
-      var url = window.__MC_APPS_SCRIPT_URL__ + '?action=check&c=' + encodeURIComponent(code) + '&t=' + Date.now();
-      var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
-      var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, 12000) : null;
-      window.__MC_EARLY_CHECK__ = fetch(url, {
-        method: 'GET',
-        redirect: 'follow',
-        cache: 'no-store',
-        signal: ctrl ? ctrl.signal : undefined
-      }).then(function (resp) {
-        if (timer) clearTimeout(timer);
-        if (!resp.ok) throw new Error('HTTP ' + resp.status);
-        return resp.json();
-      }).catch(function (err) {
-        if (timer) clearTimeout(timer);
-        throw err;
-      });
+
+      window.__MC_EARLY_CHECK__ = window.__MC_QUERY_GAS__({ action: 'check', c: code }, 12000);
     })();
   </script>
 
@@ -2757,7 +2846,7 @@
       BANNER_TIME_LABEL: '13h00 às 17h00',
       FULL_ADDRESS: 'R. Joaquim Oliveira Freitas, 1027 - Vila Mangalot, São Paulo - SP',
       /* Cole abaixo a URL do App da Web gerada no Google Apps Script */
-      APPS_SCRIPT_URL: window.__MC_APPS_SCRIPT_URL__ || 'https://script.google.com/macros/s/AKfycbwzH2je85sEjgMU4rJhbXr7iTWsM0OLaDl99UynQn6WsLyMG2hye3TLd42W8u2i-4OX/exec',
+      APPS_SCRIPT_URL: window.__MC_APPS_SCRIPT_URL__ || 'https://script.google.com/macros/s/AKfycbwmVXVslVeb__skEcTT6l72cqVNWt1dlaU-90XnUaIzZ4OClSXLsz9_og3-BOizuRIy/exec',
       /* true = exige link individual (?c=CODIGO) quando o Apps Script estiver ativo */
       REQUIRE_INDIVIDUAL_CODE: true
     };
@@ -3165,26 +3254,16 @@
           const earlyPromise = window.__MC_EARLY_CHECK__;
           window.__MC_EARLY_CHECK__ = null;
           data = await earlyPromise;
+        } else if (typeof window.__MC_QUERY_GAS__ === 'function') {
+          data = await window.__MC_QUERY_GAS__({ action: 'check', c: inviteCode }, 12000);
         } else {
           const checkUrl =
             EVENT_CONFIG.APPS_SCRIPT_URL +
             '?action=check&c=' + encodeURIComponent(inviteCode) +
             '&t=' + Date.now();
-
-          const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
-          const timer = ctrl ? setTimeout(() => ctrl.abort(), 12000) : null;
-          try {
-            const resp = await fetch(checkUrl, {
-              method: 'GET',
-              redirect: 'follow',
-              cache: 'no-store',
-              signal: ctrl ? ctrl.signal : undefined
-            });
-            if (!resp.ok) throw new Error('HTTP ' + resp.status);
-            data = await resp.json();
-          } finally {
-            if (timer) clearTimeout(timer);
-          }
+          const resp = await fetch(checkUrl, { method: 'GET', redirect: 'follow', cache: 'no-store' });
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          data = await resp.json();
         }
 
         if (data && data.status === 'ATIVO' && data.valid) {
@@ -3237,6 +3316,21 @@
     }
 
     async function sendCancellationToSheet(payload) {
+      if (typeof window.__MC_QUERY_GAS__ === 'function') {
+        try {
+          const jData = await window.__MC_QUERY_GAS__({
+            action: 'cancel',
+            c: payload.code,
+            name: payload.name,
+            message: payload.message,
+            aware: '1'
+          }, 12000);
+          if (jData && jData.ok !== false) return jData;
+        } catch (jsonpErr) {
+          // Segue para POST/GET padrao
+        }
+      }
+
       // Tenta POST simples (text/plain evita preflight CORS no Apps Script)
       try {
         const postResp = await fetch(EVENT_CONFIG.APPS_SCRIPT_URL, {
