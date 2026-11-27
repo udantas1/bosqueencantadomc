@@ -1436,13 +1436,454 @@
       transition: opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1), transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
+
+    /* =======================================================
+       CONTROLE DE ACESSO (CONVITE INDIVIDUAL / ENCERRADO)
+       ======================================================= */
+    body.invite-locked .intro-scene,
+    body.invite-locked .page-content,
+    body.invite-locked .scroll-dots,
+    body.invite-locked #menuModal {
+      display: none !important;
+    }
+
+    .access-gate {
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 18px;
+      background: rgba(240, 243, 236, 0.56);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      opacity: 1;
+      transition: opacity 0.45s ease, visibility 0.45s ease;
+    }
+
+    .access-gate.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .gate-card {
+      width: 100%;
+      max-width: 440px;
+      padding: 36px 28px 32px;
+      border-radius: var(--radius-lg);
+      background: var(--glass-strong);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--shadow-glass);
+      text-align: center;
+    }
+
+    .gate-icon {
+      width: 54px;
+      height: 54px;
+      margin: 0 auto 16px;
+      border-radius: 50%;
+      background: var(--sage-tint);
+      border: 1px solid rgba(110, 138, 104, 0.28);
+      color: var(--sage-deep);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .gate-icon.rose {
+      background: var(--rose-tint);
+      border-color: rgba(199, 140, 135, 0.34);
+      color: var(--rose-deep);
+    }
+
+    .gate-icon svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .gate-spinner {
+      animation: gateSpin 1.1s linear infinite;
+    }
+
+    @keyframes gateSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .gate-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.72rem;
+      font-weight: 600;
+      color: var(--sage-deep);
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+
+    .gate-desc {
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .gate-sub {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(189, 155, 94, 0.28);
+      font-size: 0.80rem;
+      color: var(--text-muted);
+      letter-spacing: 0.02em;
+    }
+
+    .gate-retry-btn {
+      margin-top: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 22px;
+      border-radius: 999px;
+      border: 1px solid var(--sage-accent);
+      background: var(--sage-deep);
+      color: #FFFDFB;
+      font-family: inherit;
+      font-size: 0.86rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .gate-retry-btn:hover {
+      transform: translateY(-1px);
+      opacity: 0.94;
+    }
+
+    /* =======================================================
+       RETIRAR CONFIRMACAO DE PRESENCA (MINIMALISTA)
+       ======================================================= */
+    .cancel-section {
+      margin: 0;
+    }
+
+    .cancel-trigger-wrap {
+      text-align: center;
+    }
+
+    .btn-cancel-trigger {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 12px 22px;
+      border-radius: 999px;
+      border: 1px solid rgba(162, 103, 98, 0.34);
+      background: rgba(255, 253, 248, 0.82);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      color: var(--rose-deep);
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      box-shadow: var(--shadow-tile);
+      transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+    }
+
+    .btn-cancel-trigger:hover {
+      background: var(--rose-tint);
+      border-color: var(--rose-accent);
+      transform: translateY(-1px);
+    }
+
+    .btn-cancel-trigger svg {
+      width: 17px;
+      height: 17px;
+      flex-shrink: 0;
+    }
+
+    .cancel-panel {
+      position: relative;
+      margin-top: 14px;
+      animation: cancelPanelIn 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .cancel-panel[hidden] {
+      display: none !important;
+    }
+
+    @keyframes cancelPanelIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .cancel-close-btn {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid rgba(122, 146, 117, 0.26);
+      background: rgba(255, 253, 248, 0.92);
+      color: var(--text-secondary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .cancel-close-btn:hover {
+      background: var(--rose-tint);
+      border-color: var(--rose-accent);
+      color: var(--rose-deep);
+    }
+
+    .cancel-close-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .cancel-form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 4px;
+    }
+
+    .cancel-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      text-align: left;
+    }
+
+    .cancel-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+
+    .cancel-input,
+    .cancel-textarea {
+      width: 100%;
+      font-family: inherit;
+      font-size: 0.92rem;
+      color: var(--text-primary);
+      background: rgba(255, 253, 248, 0.95);
+      border: 1px solid rgba(122, 146, 117, 0.30);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .cancel-input:focus,
+    .cancel-textarea:focus {
+      border-color: var(--rose-accent);
+      box-shadow: 0 0 0 3px rgba(199, 140, 135, 0.16);
+    }
+
+    .cancel-textarea {
+      resize: vertical;
+      min-height: 88px;
+      line-height: 1.55;
+    }
+
+    .cancel-warning-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 15px 16px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, rgba(246, 233, 232, 0.76), rgba(247, 240, 224, 0.62));
+      border: 1px solid rgba(199, 140, 135, 0.42);
+      text-align: left;
+    }
+
+    .cancel-warning-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: rgba(255, 253, 248, 0.90);
+      border: 1px solid rgba(199, 140, 135, 0.34);
+      color: var(--rose-deep);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .cancel-warning-icon svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .cancel-warning-title {
+      font-size: 0.76rem;
+      font-weight: 600;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--rose-deep);
+      margin-bottom: 4px;
+    }
+
+    .cancel-warning-text {
+      font-size: 0.85rem;
+      color: var(--text-primary);
+      line-height: 1.55;
+    }
+
+    .cancel-consent-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 253, 248, 0.88);
+      border: 1px solid rgba(122, 146, 117, 0.24);
+      cursor: pointer;
+      text-align: left;
+      user-select: none;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .cancel-consent-label:hover {
+      border-color: rgba(199, 140, 135, 0.48);
+    }
+
+    .cancel-checkbox {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 19px;
+      height: 19px;
+      margin-top: 2px;
+      border-radius: 6px;
+      border: 1.6px solid rgba(162, 103, 98, 0.56);
+      background: #FFFDFB;
+      flex-shrink: 0;
+      display: inline-grid;
+      place-content: center;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .cancel-checkbox::before {
+      content: '';
+      width: 10px;
+      height: 10px;
+      transform: scale(0);
+      transition: transform 0.16s ease;
+      background-color: #FFFDFB;
+      clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+    }
+
+    .cancel-checkbox:checked {
+      background: var(--rose-deep);
+      border-color: var(--rose-deep);
+    }
+
+    .cancel-checkbox:checked::before {
+      transform: scale(1);
+    }
+
+    .cancel-consent-text {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .cancel-form-error {
+      font-size: 0.83rem;
+      color: var(--rose-deep);
+      background: rgba(246, 233, 232, 0.85);
+      border: 1px solid rgba(199, 140, 135, 0.4);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      text-align: left;
+    }
+
+    .cancel-form-error[hidden] {
+      display: none !important;
+    }
+
+    .cancel-submit-wrap {
+      margin-top: 4px;
+      animation: cancelPanelIn 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .cancel-submit-wrap[hidden] {
+      display: none !important;
+    }
+
+    .btn-confirm-cancel {
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 14px 22px;
+      border-radius: 999px;
+      border: 1px solid rgba(162, 103, 98, 0.35);
+      background: linear-gradient(135deg, #B26E68, #945651);
+      color: #FFFDFB;
+      font-family: inherit;
+      font-size: 0.90rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      box-shadow: 0 12px 26px rgba(148, 86, 81, 0.26);
+      transition: transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn-confirm-cancel:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 30px rgba(148, 86, 81, 0.32);
+    }
+
+    .btn-confirm-cancel:disabled {
+      opacity: 0.72;
+      cursor: wait;
+    }
+
+    .btn-confirm-cancel svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
     .reveal.in-view {
       opacity: 1;
       transform: translateY(0);
     }
   </style>
 </head>
-<body>
+<body class="invite-locked">
+  <!-- ==================== TELA DE VERIFICACAO / BLOQUEIO DO CONVITE ==================== -->
+  <div class="access-gate" id="accessGate" role="status" aria-live="polite">
+    <div class="gate-card">
+      <div class="gate-icon" id="gateIcon" aria-hidden="true">
+        <svg class="gate-spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+        </svg>
+      </div>
+      <h2 class="gate-title" id="gateTitle">Abrindo convite</h2>
+      <p class="gate-desc" id="gateDesc">Verificando seu acesso ao Bosque Encantado da Maria Celina...</p>
+      <button type="button" class="gate-retry-btn" id="gateRetryBtn" hidden>Tentar novamente</button>
+      <p class="gate-sub" id="gateSub">Bosque Encantado · Aniversário de 1 Ano</p>
+    </div>
+  </div>
   <!-- Fundo estatico e detalhado do Bosque Encantado com os animais parados em cada cena ao rolar -->
   <div class="forest-stage" aria-hidden="true">
     <div class="forest-scene" data-scene="0" style="opacity: 1;"></div>
@@ -2023,6 +2464,103 @@
 
     <div class="card-gap"></div>
 
+    <!-- ==================== RETIRAR CONFIRMACAO DE PRESENCA ==================== -->
+    <section class="cancel-section reveal" id="retirarConfirmacao">
+      <div class="cancel-trigger-wrap" id="cancelTriggerWrap">
+        <button type="button" class="btn-cancel-trigger" id="btnOpenCancelPanel" aria-expanded="false" aria-controls="cancelPanel">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="18" rx="3" />
+            <path d="M16 2v4M8 2v4M3 10h18" />
+            <path d="M10 14l4 4M14 14l-4 4" />
+          </svg>
+          <span>Retirar confirmação de presença</span>
+        </button>
+      </div>
+
+      <div class="card cancel-panel" id="cancelPanel" hidden>
+        <button type="button" class="cancel-close-btn" id="btnCloseCancelPanel" aria-label="Fechar formulário">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div class="section-header" style="margin-bottom: 18px;">
+          <div class="section-icon-wrap rose" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M17 8l5 5M22 8l-5 5" />
+            </svg>
+          </div>
+          <h2 class="section-title">Retirar Confirmação</h2>
+          <p class="section-subtitle">Caso não possa comparecer, preencha os campos abaixo para atualizarmos a lista oficial.</p>
+        </div>
+
+        <form class="cancel-form" id="cancelForm" novalidate>
+          <div class="cancel-field">
+            <label class="cancel-label" for="cancelName">Seu nome</label>
+            <input
+              type="text"
+              id="cancelName"
+              class="cancel-input"
+              placeholder="Digite seu nome completo"
+              maxlength="120"
+              autocomplete="name"
+              required
+            />
+          </div>
+
+          <div class="cancel-field">
+            <label class="cancel-label" for="cancelMessage">Recado para a família</label>
+            <textarea
+              id="cancelMessage"
+              class="cancel-textarea"
+              placeholder="Escreva uma mensagem ou motivo da ausência (opcional)"
+              maxlength="600"
+            ></textarea>
+          </div>
+
+          <div class="cancel-warning-card" role="note">
+            <div class="cancel-warning-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 8v5" />
+                <circle cx="12" cy="16.2" r="0.6" fill="currentColor" />
+              </svg>
+            </div>
+            <div>
+              <div class="cancel-warning-title">Aviso sobre a lista oficial</div>
+              <p class="cancel-warning-text">
+                Ao retirar sua confirmação de presença, seu nome será <strong>excluído da lista oficial de convidados</strong>, não sendo possível entrar no espaço no dia da festa. Este convite também será encerrado e não poderá ser aberto novamente.
+              </p>
+            </div>
+          </div>
+
+          <label class="cancel-consent-label" for="cancelAwareCheckbox">
+            <input type="checkbox" id="cancelAwareCheckbox" class="cancel-checkbox" />
+            <span class="cancel-consent-text">
+              Estou ciente de que, ao retirar minha confirmação, meu nome será excluído da lista oficial e não será possível entrar no espaço no dia da festa.
+            </span>
+          </label>
+
+          <div class="cancel-form-error" id="cancelFormError" hidden></div>
+
+          <div class="cancel-submit-wrap" id="cancelSubmitWrap" hidden>
+            <button type="submit" class="btn-confirm-cancel" id="btnConfirmCancel">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M17 8l5 5M22 8l-5 5" />
+              </svg>
+              <span id="btnConfirmCancelText">Retirar presença</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <div class="card-gap"></div>
+
     <!-- ==================== RODAPE DELICADO ==================== -->
     <footer class="footer-card reveal">
       <div class="divider" aria-hidden="true">
@@ -2186,7 +2724,11 @@
       INTRO_DATE_LABEL: '09 de Janeiro de 2027 · Sábado · 13h00 às 17h00',
       BANNER_DATE_LABEL: '09/01/2027 (Sábado)',
       BANNER_TIME_LABEL: '13h00 às 17h00',
-      FULL_ADDRESS: 'R. Joaquim Oliveira Freitas, 1027 - Vila Mangalot, São Paulo - SP'
+      FULL_ADDRESS: 'R. Joaquim Oliveira Freitas, 1027 - Vila Mangalot, São Paulo - SP',
+      /* Cole abaixo a URL do App da Web gerada no Google Apps Script */
+      APPS_SCRIPT_URL: 'https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnSl2Ct_0T9AoIrlM58yS_CDx8BoEqDHr8p0PSrRH0hCWgNWQf-8yUSd7WLypOrfiJWNNErzhoGrEFjxdi4WF8Z0h3f_udL9NxGDusJi7vNBm1aR4a3XCVFZQ-M6kQTIiUXP4fM8PDTEsJxIpdTbbLf1e062DTz6cJXRAGsLBfgu927mRZUbSOc6W43p7gFf11M6TyRkqeHd6GRKXUG8lT-4NoD11R9PotUibg0N-zd5L9BJO04dBwJ-COxe4bp9GtO9FvYZcD0njqAeJGj_GR_wncyXaw&lib=M7RXdJOW08Oqbam763tgYKxy6b25xx724',
+      /* true = exige link individual (?c=CODIGO) quando o Apps Script estiver ativo */
+      REQUIRE_INDIVIDUAL_CODE: true
     };
 
     document.getElementById('introDateText').textContent = EVENT_CONFIG.INTRO_DATE_LABEL;
@@ -2447,6 +2989,303 @@
     } else {
       revealEls.forEach((el) => el.classList.add('in-view'));
     }
+
+    /* =====================================================================
+       CONTROLE DE CONVITE INDIVIDUAL + RETIRADA DE CONFIRMACAO
+       Integra com Google Sheets (abas Convites e Desistentes_Recados)
+       ===================================================================== */
+    const accessGate = document.getElementById('accessGate');
+    const gateIcon = document.getElementById('gateIcon');
+    const gateTitle = document.getElementById('gateTitle');
+    const gateDesc = document.getElementById('gateDesc');
+    const gateSub = document.getElementById('gateSub');
+    const gateRetryBtn = document.getElementById('gateRetryBtn');
+
+    const btnOpenCancelPanel = document.getElementById('btnOpenCancelPanel');
+    const btnCloseCancelPanel = document.getElementById('btnCloseCancelPanel');
+    const cancelTriggerWrap = document.getElementById('cancelTriggerWrap');
+    const cancelPanel = document.getElementById('cancelPanel');
+    const cancelForm = document.getElementById('cancelForm');
+    const cancelName = document.getElementById('cancelName');
+    const cancelMessage = document.getElementById('cancelMessage');
+    const cancelAwareCheckbox = document.getElementById('cancelAwareCheckbox');
+    const cancelSubmitWrap = document.getElementById('cancelSubmitWrap');
+    const cancelFormError = document.getElementById('cancelFormError');
+    const btnConfirmCancel = document.getElementById('btnConfirmCancel');
+    const btnConfirmCancelText = document.getElementById('btnConfirmCancelText');
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const inviteCode = (urlParams.get('c') || '').trim();
+    const isScriptConfigured =
+      typeof EVENT_CONFIG.APPS_SCRIPT_URL === 'string' &&
+      EVENT_CONFIG.APPS_SCRIPT_URL.startsWith('https://');
+    const localLockKey = 'mc_bosque_closed_' + (inviteCode ? inviteCode.toLowerCase() : 'default');
+
+    const GATE_ICONS = {
+      spinner: '<svg class="gate-spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.219-8.56" /></svg>',
+      closed: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2.5" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /><path d="M10 15.5l4 4M14 15.5l-4 4" /></svg>',
+      restricted: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2.5" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /><circle cx="12" cy="16" r="1.2" fill="currentColor" stroke="none" /></svg>',
+      offline: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h.01" /><path d="M8.5 16.5a5 5 0 0 1 7 0" /><path d="M5 12.9a10 10 0 0 1 14 0" /><path d="M2 2l20 20" /></svg>'
+    };
+
+    function destroyInviteContent() {
+      const idsToRemove = ['convite', 'menuModal', 'scrollDots'];
+      idsToRemove.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.remove();
+      });
+      const intro = document.querySelector('.intro-scene');
+      if (intro) intro.remove();
+    }
+
+    function showGateState(type, customDesc) {
+      document.body.classList.add('invite-locked');
+      accessGate.classList.remove('hidden');
+      gateRetryBtn.hidden = true;
+
+      if (type === 'loading') {
+        gateIcon.className = 'gate-icon';
+        gateIcon.innerHTML = GATE_ICONS.spinner;
+        gateTitle.textContent = 'Abrindo convite';
+        gateDesc.textContent = 'Verificando seu acesso ao Bosque Encantado da Maria Celina...';
+        gateSub.textContent = 'Bosque Encantado · Aniversário de 1 Ano';
+        return;
+      }
+
+      if (type === 'closed') {
+        destroyInviteContent();
+        gateIcon.className = 'gate-icon rose';
+        gateIcon.innerHTML = GATE_ICONS.closed;
+        gateTitle.textContent = 'Convite encerrado';
+        gateDesc.textContent = customDesc ||
+          'A confirmação de presença vinculada a este convite foi retirada e o nome foi removido da lista oficial. Por isso, este convite não está mais disponível para acesso.';
+        gateSub.textContent = 'Caso precise falar conosco, entre em contato diretamente com a família da Maria Celina.';
+        return;
+      }
+
+      if (type === 'restricted') {
+        destroyInviteContent();
+        gateIcon.className = 'gate-icon';
+        gateIcon.innerHTML = GATE_ICONS.restricted;
+        gateTitle.textContent = 'Convite individual';
+        gateDesc.textContent = customDesc ||
+          'Este convite é pessoal e requer o link individual enviado pela família da Maria Celina.';
+        gateSub.textContent = 'Verifique o link recebido no WhatsApp ou fale conosco.';
+        return;
+      }
+
+      if (type === 'offline') {
+        gateIcon.className = 'gate-icon rose';
+        gateIcon.innerHTML = GATE_ICONS.offline;
+        gateTitle.textContent = 'Não foi possível verificar';
+        gateDesc.textContent = 'Verifique sua conexão com a internet para abrir o seu convite individual.';
+        gateSub.textContent = 'Bosque Encantado · Aniversário de 1 Ano';
+        gateRetryBtn.hidden = false;
+      }
+    }
+
+    function unlockInvite(guestName) {
+      try {
+        localStorage.removeItem(localLockKey);
+      } catch (e) {}
+
+      if (guestName && cancelName && !cancelName.value.trim()) {
+        cancelName.value = guestName;
+      }
+
+      document.body.classList.remove('invite-locked');
+      accessGate.classList.add('hidden');
+      window.requestAnimationFrame(updateForestByScroll);
+    }
+
+    async function verifyInviteAccess() {
+      let cachedClosed = false;
+      try {
+        cachedClosed = localStorage.getItem(localLockKey) === '1';
+      } catch (e) {}
+
+      // Modo local / antes de colar a URL do Apps Script
+      if (!isScriptConfigured) {
+        if (cachedClosed) {
+          showGateState('closed');
+        } else {
+          unlockInvite('');
+        }
+        return;
+      }
+
+      // Apps Script ativo: exige codigo individual se configurado
+      if (!inviteCode) {
+        if (EVENT_CONFIG.REQUIRE_INDIVIDUAL_CODE) {
+          showGateState('restricted');
+        } else if (cachedClosed) {
+          showGateState('closed');
+        } else {
+          unlockInvite('');
+        }
+        return;
+      }
+
+      showGateState('loading');
+
+      try {
+        const checkUrl =
+          EVENT_CONFIG.APPS_SCRIPT_URL +
+          '?action=check&c=' + encodeURIComponent(inviteCode) +
+          '&t=' + Date.now();
+
+        const resp = await fetch(checkUrl, {
+          method: 'GET',
+          redirect: 'follow',
+          cache: 'no-store'
+        });
+
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        const data = await resp.json();
+
+        if (data && data.status === 'ATIVO' && data.valid) {
+          unlockInvite(data.nome || '');
+        } else if (data && data.status === 'CANCELADO') {
+          try { localStorage.setItem(localLockKey, '1'); } catch (e) {}
+          showGateState('closed');
+        } else {
+          showGateState('restricted', 'Não encontramos este código na lista oficial. Verifique o link individual enviado pela família da Maria Celina.');
+        }
+      } catch (err) {
+        if (cachedClosed) {
+          showGateState('closed');
+        } else {
+          showGateState('offline');
+        }
+      }
+    }
+
+    gateRetryBtn.addEventListener('click', verifyInviteAccess);
+
+    // Abrir / fechar o card de retirada de confirmacao
+    if (btnOpenCancelPanel && cancelPanel) {
+      btnOpenCancelPanel.addEventListener('click', () => {
+        cancelPanel.hidden = false;
+        cancelTriggerWrap.style.display = 'none';
+        btnOpenCancelPanel.setAttribute('aria-expanded', 'true');
+        cancelPanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    }
+
+    if (btnCloseCancelPanel && cancelPanel) {
+      btnCloseCancelPanel.addEventListener('click', () => {
+        cancelPanel.hidden = true;
+        cancelTriggerWrap.style.display = '';
+        btnOpenCancelPanel.setAttribute('aria-expanded', 'false');
+        cancelFormError.hidden = true;
+      });
+    }
+
+    // Exibe o botao final "Retirar presenca" somente quando o convidado marcar que esta ciente
+    if (cancelAwareCheckbox && cancelSubmitWrap) {
+      cancelAwareCheckbox.addEventListener('change', () => {
+        cancelSubmitWrap.hidden = !cancelAwareCheckbox.checked;
+        cancelFormError.hidden = true;
+        if (cancelAwareCheckbox.checked) {
+          cancelSubmitWrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      });
+    }
+
+    async function sendCancellationToSheet(payload) {
+      // Tenta POST simples (text/plain evita preflight CORS no Apps Script)
+      try {
+        const postResp = await fetch(EVENT_CONFIG.APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload),
+          redirect: 'follow'
+        });
+        if (postResp.ok) {
+          const data = await postResp.json().catch(() => ({ ok: true }));
+          if (data && data.ok !== false) return data;
+        }
+      } catch (postErr) {
+        // Fallback automatico via GET caso o navegador restrinja POST redirecionado
+      }
+
+      const fallbackUrl =
+        EVENT_CONFIG.APPS_SCRIPT_URL +
+        '?action=cancel' +
+        '&c=' + encodeURIComponent(payload.code) +
+        '&name=' + encodeURIComponent(payload.name) +
+        '&message=' + encodeURIComponent(payload.message) +
+        '&aware=1' +
+        '&t=' + Date.now();
+
+      const getResp = await fetch(fallbackUrl, {
+        method: 'GET',
+        redirect: 'follow',
+        cache: 'no-store'
+      });
+
+      if (!getResp.ok) throw new Error('Falha ao registrar na planilha');
+      return getResp.json().catch(() => ({ ok: true }));
+    }
+
+    if (cancelForm) {
+      cancelForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        cancelFormError.hidden = true;
+
+        const nameVal = cancelName.value.trim();
+        const msgVal = cancelMessage.value.trim();
+
+        if (!nameVal) {
+          cancelFormError.textContent = 'Por favor, informe seu nome completo antes de retirar a presença.';
+          cancelFormError.hidden = false;
+          cancelName.focus();
+          return;
+        }
+
+        if (!cancelAwareCheckbox.checked) {
+          cancelFormError.textContent = 'Marque a caixa confirmando que está ciente da exclusão da lista oficial.';
+          cancelFormError.hidden = false;
+          return;
+        }
+
+        btnConfirmCancel.disabled = true;
+        btnConfirmCancelText.textContent = 'Registrando...';
+
+        const payload = {
+          action: 'cancel',
+          code: inviteCode,
+          name: nameVal,
+          message: msgVal,
+          aware: true
+        };
+
+        try {
+          if (isScriptConfigured) {
+            await sendCancellationToSheet(payload);
+          }
+
+          try {
+            localStorage.setItem(localLockKey, '1');
+          } catch (storageErr) {}
+
+          window.scrollTo(0, 0);
+          showGateState(
+            'closed',
+            'Sua retirada de confirmação foi registrada e seu nome será removido da lista oficial. Agradecemos por nos avisar. Este convite foi encerrado e não poderá ser aberto novamente.'
+          );
+        } catch (err) {
+          btnConfirmCancel.disabled = false;
+          btnConfirmCancelText.textContent = 'Retirar presença';
+          cancelFormError.textContent = 'Não foi possível concluir agora. Verifique sua internet e tente novamente.';
+          cancelFormError.hidden = false;
+        }
+      });
+    }
+
+    // Inicia verificacao de acesso imediatamente
+    verifyInviteAccess();
+
   </script>
 </body>
 </html>
