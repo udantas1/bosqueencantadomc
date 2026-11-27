@@ -6,6 +6,37 @@
   <title>Maria Celina em um Bosque Encantado — Aniversário de 1 Ano</title>
   <meta name="description" content="Convite oficial do aniversário de 1 ano da Maria Celina no Bosque Encantado. 09 de Janeiro · 13h00 às 17h00 · Espaço Slink Festas." />
   <meta name="theme-color" content="#EBF0E6" />
+  <link rel="preconnect" href="https://script.google.com" crossorigin />
+  <link rel="preconnect" href="https://script.googleusercontent.com" crossorigin />
+  <script>
+    /* Dispara a verificacao do convite imediatamente, em paralelo ao download do restante da pagina */
+    (function () {
+      window.__MC_APPS_SCRIPT_URL__ = 'https://script.google.com/macros/s/AKfycbyaeTtDuuawOsRdjlytb35sjDa8ApsB918O7h2wkDdG31h7niHu2Xc-EFdZO3KMOsWM/exec';
+      var params = new URLSearchParams(window.location.search);
+      var code = (params.get('c') || '').trim();
+      window.__MC_INVITE_CODE__ = code;
+      if (!code || !window.__MC_APPS_SCRIPT_URL__.startsWith('https://')) return;
+      try {
+        if (localStorage.getItem('mc_bosque_closed_' + code.toLowerCase()) === '1') return;
+      } catch (e) {}
+      var url = window.__MC_APPS_SCRIPT_URL__ + '?action=check&c=' + encodeURIComponent(code) + '&t=' + Date.now();
+      var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, 12000) : null;
+      window.__MC_EARLY_CHECK__ = fetch(url, {
+        method: 'GET',
+        redirect: 'follow',
+        cache: 'no-store',
+        signal: ctrl ? ctrl.signal : undefined
+      }).then(function (resp) {
+        if (timer) clearTimeout(timer);
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        return resp.json();
+      }).catch(function (err) {
+        if (timer) clearTimeout(timer);
+        throw err;
+      });
+    })();
+  </script>
 
   <!-- Icone minimalista do bosque na aba do navegador (SVG inline, sem dependencias externas) -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23EAF0E6' stroke='%23BD9B5E' stroke-width='2.5'/%3E%3Cpath d='M32 50V22' stroke='%234A6346' stroke-width='2.6' stroke-linecap='round'/%3E%3Cpath d='M32 34c-9 0-15-6-15-15 9 0 15 6 15 15z' fill='%236E8A68'/%3E%3Cpath d='M32 29c9 0 15-6 15-15-9 0-15 6-15 15z' fill='%23C78C87'/%3E%3C/svg%3E" />
@@ -2726,7 +2757,7 @@
       BANNER_TIME_LABEL: '13h00 às 17h00',
       FULL_ADDRESS: 'R. Joaquim Oliveira Freitas, 1027 - Vila Mangalot, São Paulo - SP',
       /* Cole abaixo a URL do App da Web gerada no Google Apps Script */
-      APPS_SCRIPT_URL: 'https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnSl2Ct_0T9AoIrlM58yS_CDx8BoEqDHr8p0PSrRH0hCWgNWQf-8yUSd7WLypOrfiJWNNErzhoGrEFjxdi4WF8Z0h3f_udL9NxGDusJi7vNBm1aR4a3XCVFZQ-M6kQTIiUXP4fM8PDTEsJxIpdTbbLf1e062DTz6cJXRAGsLBfgu927mRZUbSOc6W43p7gFf11M6TyRkqeHd6GRKXUG8lT-4NoD11R9PotUibg0N-zd5L9BJO04dBwJ-COxe4bp9GtO9FvYZcD0njqAeJGj_GR_wncyXaw&lib=M7RXdJOW08Oqbam763tgYKxy6b25xx724',
+      APPS_SCRIPT_URL: window.__MC_APPS_SCRIPT_URL__ || 'https://script.google.com/macros/s/AKfycbyaeTtDuuawOsRdjlytb35sjDa8ApsB918O7h2wkDdG31h7niHu2Xc-EFdZO3KMOsWM/exec',
       /* true = exige link individual (?c=CODIGO) quando o Apps Script estiver ativo */
       REQUIRE_INDIVIDUAL_CODE: true
     };
@@ -3129,19 +3160,32 @@
       showGateState('loading');
 
       try {
-        const checkUrl =
-          EVENT_CONFIG.APPS_SCRIPT_URL +
-          '?action=check&c=' + encodeURIComponent(inviteCode) +
-          '&t=' + Date.now();
+        let data;
+        if (window.__MC_EARLY_CHECK__) {
+          const earlyPromise = window.__MC_EARLY_CHECK__;
+          window.__MC_EARLY_CHECK__ = null;
+          data = await earlyPromise;
+        } else {
+          const checkUrl =
+            EVENT_CONFIG.APPS_SCRIPT_URL +
+            '?action=check&c=' + encodeURIComponent(inviteCode) +
+            '&t=' + Date.now();
 
-        const resp = await fetch(checkUrl, {
-          method: 'GET',
-          redirect: 'follow',
-          cache: 'no-store'
-        });
-
-        if (!resp.ok) throw new Error('HTTP ' + resp.status);
-        const data = await resp.json();
+          const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+          const timer = ctrl ? setTimeout(() => ctrl.abort(), 12000) : null;
+          try {
+            const resp = await fetch(checkUrl, {
+              method: 'GET',
+              redirect: 'follow',
+              cache: 'no-store',
+              signal: ctrl ? ctrl.signal : undefined
+            });
+            if (!resp.ok) throw new Error('HTTP ' + resp.status);
+            data = await resp.json();
+          } finally {
+            if (timer) clearTimeout(timer);
+          }
+        }
 
         if (data && data.status === 'ATIVO' && data.valid) {
           unlockInvite(data.nome || '');
