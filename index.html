@@ -8,130 +8,6 @@
   <meta name="theme-color" content="#EBF0E6" />
   <link rel="preconnect" href="https://script.google.com" crossorigin />
   <link rel="preconnect" href="https://script.googleusercontent.com" crossorigin />
-  <script>
-    /* Dispara a verificacao do convite imediatamente (JSONP + fetch), em paralelo ao download da pagina */
-    (function () {
-      window.__MC_APPS_SCRIPT_URL__ = 'https://script.google.com/macros/s/AKfycbxlYYDsiYVyDRxBR_aqnnacopHauVAYBu9Ykn8smJkH_i3q9BSSWTRy74ZrgInZ7cXY/exec';
-      var params = new URLSearchParams(window.location.search);
-      var code = (params.get('c') || '').trim();
-      window.__MC_INVITE_CODE__ = code;
-
-      window.__MC_QUERY_GAS__ = function (queryParams, timeoutMs) {
-  var ms = timeoutMs || 12000;
-  var baseUrl = window.__MC_APPS_SCRIPT_URL__;
-  var qs = [];
-  for (var k in queryParams) {
-    if (Object.prototype.hasOwnProperty.call(queryParams, k) && queryParams[k] !== undefined && queryParams[k] !== null) {
-      qs.push(encodeURIComponent(k) + '=' + encodeURIComponent(String(queryParams[k])));
-    }
-  }
-  qs.push('t=' + Date.now());
-  var sep = baseUrl.indexOf('?') === -1 ? '?' : '&';
-  
-  // Cria uma Promise que será resolvida pelo JSONP
-  return new Promise(function (resolve, reject) {
-    // Cria um nome de função único para o callback
-    var cbName = '__mcJsonpCb_' + Date.now() + '_' + Math.floor(Math.random() * 1000000);
-    var settled = false;
-    var script = document.createElement('script');
-
-    function cleanup() {
-      try { delete window[cbName]; } catch (e) { window[cbName] = undefined; }
-      if (script && script.parentNode) {
-        script.parentNode.removeChild(script);
-      }
-    }
-
-    // Timeout de segurança
-    var timer = setTimeout(function () {
-      if (settled) return;
-      settled = true;
-      cleanup();
-      reject(new Error('JSONP timeout'));
-    }, ms);
-
-    // Esta função será chamada pelo servidor (Google Apps Script)
-    window[cbName] = function (payload) {
-      if (settled) return;
-      settled = true;
-      clearTimeout(timer);
-      cleanup();
-      resolve(payload);
-    };
-
-    script.async = true;
-    // O URL inclui o parâmetro 'callback' com o nome da função
-    script.src = baseUrl + sep + qs.join('&') + '&callback=' + encodeURIComponent(cbName);
-    
-    script.onload = function () {
-      setTimeout(function () {
-        if (!settled) {
-          settled = true;
-          clearTimeout(timer);
-          cleanup();
-          reject(new Error('JSONP callback not invoked (possível erro no servidor)'));
-        }
-      }, 50);
-    };
-    script.onerror = function () {
-      if (settled) return;
-      settled = true;
-      clearTimeout(timer);
-      cleanup();
-      reject(new Error('Erro de conexão ao carregar o script do servidor'));
-    };
-
-    // Adiciona o script à página, iniciando a requisição ignorando o CORS
-    (document.head || document.documentElement).appendChild(script);
-  });
-};
-
-        var fetchPromise = new Promise(function (resolve, reject) {
-          if (typeof fetch !== 'function') {
-            reject(new Error('No fetch'));
-            return;
-          }
-          var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
-          var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, ms) : null;
-          fetch(fullUrlBase, {
-            method: 'GET',
-            redirect: 'follow',
-            cache: 'no-store',
-            signal: ctrl ? ctrl.signal : undefined
-          }).then(function (resp) {
-            if (timer) clearTimeout(timer);
-            if (!resp.ok) throw new Error('HTTP ' + resp.status);
-            return resp.json();
-          }).then(resolve).catch(function (err) {
-            if (timer) clearTimeout(timer);
-            reject(err);
-          });
-        });
-
-        // Retorna o primeiro que responder com sucesso (JSONP costuma contornar bloqueios de CORS/extensoes)
-        return new Promise(function (resolve, reject) {
-          var errors = [];
-          var failCount = 0;
-          function onFail(err) {
-            errors.push(err);
-            failCount++;
-            if (failCount === 2) {
-              reject(errors[0] || new Error('Falha na consulta'));
-            }
-          }
-          jsonpPromise.then(resolve, onFail);
-          fetchPromise.then(resolve, onFail);
-        });
-      };
-
-      if (!code || !window.__MC_APPS_SCRIPT_URL__.startsWith('https://')) return;
-      try {
-        if (localStorage.getItem('mc_bosque_closed_' + code.toLowerCase()) === '1') return;
-      } catch (e) {}
-
-      window.__MC_EARLY_CHECK__ = window.__MC_QUERY_GAS__({ action: 'check', c: code }, 12000);
-    })();
-  </script>
 
   <!-- Icone minimalista do bosque na aba do navegador (SVG inline, sem dependencias externas) -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23EAF0E6' stroke='%23BD9B5E' stroke-width='2.5'/%3E%3Cpath d='M32 50V22' stroke='%234A6346' stroke-width='2.6' stroke-linecap='round'/%3E%3Cpath d='M32 34c-9 0-15-6-15-15 9 0 15 6 15 15z' fill='%236E8A68'/%3E%3Cpath d='M32 29c9 0 15-6 15-15-9 0-15 6-15 15z' fill='%23C78C87'/%3E%3C/svg%3E" />
@@ -2854,7 +2730,7 @@
       /* Cole abaixo a URL do App da Web gerada no Google Apps Script */
       APPS_SCRIPT_URL: window.__MC_APPS_SCRIPT_URL__ || 'https://script.google.com/macros/s/AKfycbwmVXVslVeb__skEcTT6l72cqVNWt1dlaU-90XnUaIzZ4OClSXLsz9_og3-BOizuRIy/exec',
       /* true = exige link individual (?c=CODIGO) quando o Apps Script estiver ativo */
-      REQUIRE_INDIVIDUAL_CODE: true
+      REQUIRE_INDIVIDUAL_CODE: false
     };
 
     document.getElementById('introDateText').textContent = EVENT_CONFIG.INTRO_DATE_LABEL;
@@ -3225,68 +3101,8 @@
     }
 
     async function verifyInviteAccess() {
-      let cachedClosed = false;
-      try {
-        cachedClosed = localStorage.getItem(localLockKey) === '1';
-      } catch (e) {}
-
-      // Modo local / antes de colar a URL do Apps Script
-      if (!isScriptConfigured) {
-        if (cachedClosed) {
-          showGateState('closed');
-        } else {
-          unlockInvite('');
-        }
-        return;
-      }
-
-      // Apps Script ativo: exige codigo individual se configurado
-      if (!inviteCode) {
-        if (EVENT_CONFIG.REQUIRE_INDIVIDUAL_CODE) {
-          showGateState('restricted');
-        } else if (cachedClosed) {
-          showGateState('closed');
-        } else {
-          unlockInvite('');
-        }
-        return;
-      }
-
-      showGateState('loading');
-
-      try {
-        let data;
-        if (window.__MC_EARLY_CHECK__) {
-          const earlyPromise = window.__MC_EARLY_CHECK__;
-          window.__MC_EARLY_CHECK__ = null;
-          data = await earlyPromise;
-        } else if (typeof window.__MC_QUERY_GAS__ === 'function') {
-          data = await window.__MC_QUERY_GAS__({ action: 'check', c: inviteCode }, 12000);
-        } else {
-          const checkUrl =
-            EVENT_CONFIG.APPS_SCRIPT_URL +
-            '?action=check&c=' + encodeURIComponent(inviteCode) +
-            '&t=' + Date.now();
-          const resp = await fetch(checkUrl, { method: 'GET', redirect: 'follow', cache: 'no-store' });
-          if (!resp.ok) throw new Error('HTTP ' + resp.status);
-          data = await resp.json();
-        }
-
-        if (data && data.status === 'ATIVO' && data.valid) {
-          unlockInvite(data.nome || '');
-        } else if (data && data.status === 'CANCELADO') {
-          try { localStorage.setItem(localLockKey, '1'); } catch (e) {}
-          showGateState('closed');
-        } else {
-          showGateState('restricted', 'Não encontramos este código na lista oficial. Verifique o link individual enviado pela família da Maria Celina.');
-        }
-      } catch (err) {
-        if (cachedClosed) {
-          showGateState('closed');
-        } else {
-          showGateState('offline');
-        }
-      }
+      // Acesso irrestrito: abre o convite diretamente sem bloquear por codigo ou chamada externa
+      unlockInvite('');
     }
 
     gateRetryBtn.addEventListener('click', verifyInviteAccess);
@@ -3398,30 +3214,49 @@
 
         const payload = {
           action: 'cancel',
-          code: inviteCode,
+          code: inviteCode || 'SEM_CODIGO',
           name: nameVal,
           message: msgVal,
           aware: true
         };
 
         try {
-          if (isScriptConfigured) {
-            await sendCancellationToSheet(payload);
-          }
-
           try {
-            localStorage.setItem(localLockKey, '1');
+            localStorage.setItem('mc_bosque_cancel_last', JSON.stringify({
+              code: payload.code,
+              name: payload.name,
+              message: payload.message,
+              at: new Date().toISOString()
+            }));
           } catch (storageErr) {}
 
-          window.scrollTo(0, 0);
-          showGateState(
-            'closed',
-            'Sua retirada de confirmação foi registrada e seu nome será removido da lista oficial. Agradecemos por nos avisar. Este convite foi encerrado e não poderá ser aberto novamente.'
-          );
+          if (isScriptConfigured) {
+            try {
+              await sendCancellationToSheet(payload);
+            } catch (sheetErr) {
+              // Nao trava a retirada de confirmacao caso o Apps Script esteja bloqueado ou indisponivel
+            }
+          }
+
+          cancelForm.reset();
+          if (cancelSubmitWrap) cancelSubmitWrap.hidden = true;
+          btnConfirmCancel.disabled = false;
+          btnConfirmCancelText.textContent = 'Retirar presença';
+
+          let statusNote = document.getElementById('cancelSuccessNote');
+          if (!statusNote) {
+            statusNote = document.createElement('div');
+            statusNote.id = 'cancelSuccessNote';
+            statusNote.setAttribute('role', 'status');
+            statusNote.style.cssText = 'margin-top:14px;padding:14px 16px;border-radius:14px;background:#F6E9E8;border:1px solid rgba(199,140,135,0.45);color:#4A2E2C;font-size:0.95rem;line-height:1.5;';
+            cancelForm.appendChild(statusNote);
+          }
+          statusNote.textContent = 'Retirada de confirmação registrada para ' + nameVal + '. Agradecemos por avisar a família da Maria Celina.';
+          statusNote.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         } catch (err) {
           btnConfirmCancel.disabled = false;
           btnConfirmCancelText.textContent = 'Retirar presença';
-          cancelFormError.textContent = 'Não foi possível concluir agora. Verifique sua internet e tente novamente.';
+          cancelFormError.textContent = 'Não foi possível concluir agora. Tente novamente.';
           cancelFormError.hidden = false;
         }
       });
