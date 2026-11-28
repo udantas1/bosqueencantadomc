@@ -3193,7 +3193,8 @@
           data = await window.__MC_QUERY_GAS__({ action: 'check', c: inviteCode }, 10000);
         }
 
-        if (data && String(data.status || '').toUpperCase() === 'CANCELADO') {
+        const statusNorm = data ? String(data.status || '').trim().toUpperCase() : '';
+        if (statusNorm === 'CANCELADO' || (data && data.valid === false && statusNorm !== 'ATIVO')) {
           showGateState('closed');
           return;
         }
