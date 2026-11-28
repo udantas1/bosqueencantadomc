@@ -10,6 +10,84 @@
   <link rel="preconnect" href="https://script.googleusercontent.com" crossorigin />
 
   <!-- Icone minimalista do bosque na aba do navegador (SVG inline, sem dependencias externas) -->
+  <script>
+    /* Consulta antecipada via JSONP quando ha codigo (?c=...) na URL, sem bloquear se nao houver codigo ou se falhar */
+    (function () {
+      window.__MC_APPS_SCRIPT_URL__ = 'https://script.google.com/macros/s/AKfycbwmVXVslVeb__skEcTT6l72cqVNWt1dlaU-90XnUaIzZ4OClSXLsz9_og3-BOizuRIy/exec';
+      var params = new URLSearchParams(window.location.search);
+      var code = (params.get('c') || '').trim();
+      window.__MC_INVITE_CODE__ = code;
+
+      window.__MC_QUERY_GAS__ = function (queryParams, timeoutMs) {
+        var ms = timeoutMs || 10000;
+        var baseUrl = window.__MC_APPS_SCRIPT_URL__;
+        var qs = [];
+        for (var k in queryParams) {
+          if (Object.prototype.hasOwnProperty.call(queryParams, k) && queryParams[k] !== undefined && queryParams[k] !== null) {
+            qs.push(encodeURIComponent(k) + '=' + encodeURIComponent(String(queryParams[k])));
+          }
+        }
+        qs.push('t=' + Date.now());
+        var sep = baseUrl.indexOf('?') === -1 ? '?' : '&';
+        var fullUrlBase = baseUrl + sep + qs.join('&');
+
+        return new Promise(function (resolve, reject) {
+          var cbName = '__mcJsonpCb_' + Date.now() + '_' + Math.floor(Math.random() * 1000000);
+          var settled = false;
+          var script = document.createElement('script');
+
+          function cleanup() {
+            try { delete window[cbName]; } catch (e) { window[cbName] = undefined; }
+            if (script && script.parentNode) {
+              script.parentNode.removeChild(script);
+            }
+          }
+
+          var timer = setTimeout(function () {
+            if (settled) return;
+            settled = true;
+            cleanup();
+            reject(new Error('JSONP timeout'));
+          }, ms);
+
+          window[cbName] = function (payload) {
+            if (settled) return;
+            settled = true;
+            clearTimeout(timer);
+            cleanup();
+            resolve(payload);
+          };
+
+          script.async = true;
+          script.src = fullUrlBase + '&callback=' + encodeURIComponent(cbName);
+          script.onload = function () {
+            setTimeout(function () {
+              if (!settled) {
+                settled = true;
+                clearTimeout(timer);
+                cleanup();
+                reject(new Error('JSONP callback not invoked'));
+              }
+            }, 60);
+          };
+          script.onerror = function () {
+            if (settled) return;
+            settled = true;
+            clearTimeout(timer);
+            cleanup();
+            reject(new Error('JSONP script load error'));
+          };
+
+          (document.head || document.documentElement).appendChild(script);
+        });
+      };
+
+      if (!code || !window.__MC_APPS_SCRIPT_URL__.startsWith('https://')) return;
+      window.__MC_EARLY_CHECK__ = window.__MC_QUERY_GAS__({ action: 'check', c: code }, 10000).catch(function () {
+        return null;
+      });
+    })();
+  </script>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23EAF0E6' stroke='%23BD9B5E' stroke-width='2.5'/%3E%3Cpath d='M32 50V22' stroke='%234A6346' stroke-width='2.6' stroke-linecap='round'/%3E%3Cpath d='M32 34c-9 0-15-6-15-15 9 0 15 6 15 15z' fill='%236E8A68'/%3E%3Cpath d='M32 29c9 0 15-6 15-15-9 0-15 6-15 15z' fill='%23C78C87'/%3E%3C/svg%3E" />
 
   <!-- Previa ao compartilhar no WhatsApp (foto oficial da Maria Celina) -->
@@ -2727,9 +2805,8 @@
       BANNER_DATE_LABEL: '09/01/2027 (Sábado)',
       BANNER_TIME_LABEL: '13h00 às 17h00',
       FULL_ADDRESS: 'R. Joaquim Oliveira Freitas, 1027 - Vila Mangalot, São Paulo - SP',
-      /* Cole abaixo a URL do App da Web gerada no Google Apps Script */
       APPS_SCRIPT_URL: window.__MC_APPS_SCRIPT_URL__ || 'https://script.google.com/macros/s/AKfycbwmVXVslVeb__skEcTT6l72cqVNWt1dlaU-90XnUaIzZ4OClSXLsz9_og3-BOizuRIy/exec',
-      /* true = exige link individual (?c=CODIGO) quando o Apps Script estiver ativo */
+      /* false = abre o convite sem exigir codigo na URL ou travar por erro de rede */
       REQUIRE_INDIVIDUAL_CODE: false
     };
 
@@ -3101,8 +3178,31 @@
     }
 
     async function verifyInviteAccess() {
-      // Acesso irrestrito: abre o convite diretamente sem bloquear por codigo ou chamada externa
-      unlockInvite('');
+      if (!inviteCode || !isScriptConfigured) {
+        unlockInvite('');
+        return;
+      }
+
+      try {
+        let data = null;
+        if (window.__MC_EARLY_CHECK__) {
+          data = await window.__MC_EARLY_CHECK__;
+          window.__MC_EARLY_CHECK__ = null;
+        }
+        if (!data && typeof window.__MC_QUERY_GAS__ === 'function') {
+          data = await window.__MC_QUERY_GAS__({ action: 'check', c: inviteCode }, 10000);
+        }
+
+        if (data && String(data.status || '').toUpperCase() === 'CANCELADO') {
+          showGateState('closed');
+          return;
+        }
+
+        unlockInvite((data && data.nome) ? String(data.nome) : '');
+      } catch (err) {
+        // Sem bloqueio por falha de rede: abre o convite normalmente
+        unlockInvite('');
+      }
     }
 
     gateRetryBtn.addEventListener('click', verifyInviteAccess);
@@ -3238,21 +3338,11 @@
             }
           }
 
-          cancelForm.reset();
-          if (cancelSubmitWrap) cancelSubmitWrap.hidden = true;
-          btnConfirmCancel.disabled = false;
-          btnConfirmCancelText.textContent = 'Retirar presença';
-
-          let statusNote = document.getElementById('cancelSuccessNote');
-          if (!statusNote) {
-            statusNote = document.createElement('div');
-            statusNote.id = 'cancelSuccessNote';
-            statusNote.setAttribute('role', 'status');
-            statusNote.style.cssText = 'margin-top:14px;padding:14px 16px;border-radius:14px;background:#F6E9E8;border:1px solid rgba(199,140,135,0.45);color:#4A2E2C;font-size:0.95rem;line-height:1.5;';
-            cancelForm.appendChild(statusNote);
-          }
-          statusNote.textContent = 'Retirada de confirmação registrada para ' + nameVal + '. Agradecemos por avisar a família da Maria Celina.';
-          statusNote.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          window.scrollTo(0, 0);
+          showGateState(
+            'closed',
+            'Sua retirada de confirmação foi registrada e seu nome será removido da lista oficial. Agradecemos por nos avisar. Este convite foi encerrado e não poderá ser aberto novamente.'
+          );
         } catch (err) {
           btnConfirmCancel.disabled = false;
           btnConfirmCancelText.textContent = 'Retirar presença';
